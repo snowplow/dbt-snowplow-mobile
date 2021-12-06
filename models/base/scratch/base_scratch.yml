@@ -1,0 +1,404 @@
+version: 2
+
+models:
+  - name: snowplow_mobile_base_new_event_limits
+    description: '{{ doc("table_base_new_event_limits") }}'
+    columns:
+      - name: lower_limit
+        description: The lower `collector_tstamp` limit for the run
+      - name: upper_limit
+        description: The upper `collector_tstamp` limit for the run
+  - name: snowplow_mobile_base_sessions_this_run
+    description: '{{ doc("table_base_sessions_this_run") }}'
+    columns:
+      - name: session_id
+        description: '{{ doc("col_domain_sessionid") }}'
+        tags:
+          - primary-key
+        tests:
+          - unique
+          - not_null
+      - name: device_user_id
+        description: '{{ doc("col_device_user_id") }}'
+        tests:
+          - not_null
+      - name: start_tstamp
+        description: '{{ doc("col_start_tstamp") }}'
+        tests:
+          - not_null
+      - name: end_tstamp
+        description: '{{ doc("col_end_tstamp") }}'
+        tests:
+          - not_null
+  - name: snowplow_mobile_base_events_this_run
+    description: '{{ doc("table_base_events_this_run") }}'
+    columns:
+      - name: screen_id
+        description: '{{ doc("col_screen_id") }}'
+      - name: screen_name
+        description: '{{ doc("col_screen_name") }}'
+      - name: screen_activity
+        description: '{{ doc("col_screen_activity") }}'
+      - name: screen_fragment
+        description: '{{ doc("col_screen_fragment") }}'
+      - name: screen_top_view_controller
+        description: '{{ doc("col_screen_top_view_controller") }}'
+      - name: screescreen_top_view_controllern_type
+        description: '{{ doc("col_screen_type") }}'
+      - name: screen_view_controller
+        description: '{{ doc("col_screen_view_controller") }}'
+      - name: device_manufacturer
+        description: '{{ doc("col_device_manufacturer") }}'
+      - name: device_model
+        description: '{{ doc("col_device_model") }}'
+      - name: os_type
+        description: '{{ doc("col_os_type") }}'
+      - name: os_version
+        description: '{{ doc("col_os_version") }}'
+      - name: android_idfa
+        description: '{{ doc("col_android_idfa") }}'
+      - name: apple_idfa
+        description: '{{ doc("col_apple_idfa") }}'
+      - name: apple_idfv
+        description: '{{ doc("col_apple_idfv") }}'
+      - name: carrier
+        description: '{{ doc("col_carrier") }}'
+      - name: open_idfa
+        description: '{{ doc("col_open_idfa") }}'
+      - name: network_technology
+        description: '{{ doc("col_network_technology") }}'
+      - name: network_type
+        description: '{{ doc("col_network_type") }}'
+      - name: device_latitude
+        description: '{{ doc("col_device_latitude") }}'
+      - name: device_longitude
+        description: '{{ doc("col_device_longitude") }}'
+      - name: device_latitude_longitude_accuracy
+        description: '{{ doc("col_device_latitude_longitude_accuracy") }}'
+      - name: device_aldevice_latitude_longitude_accuracytitude
+        description: '{{ doc("col_device_altitude") }}'
+      - name: device_altitude_accuracy
+        description: '{{ doc("col_device_altitude_accuracy") }}'
+      - name: device_bearing
+        description: '{{ doc("col_device_bearing") }}'
+      - name: device_speed
+        description: '{{ doc("col_device_speed") }}'
+      - name: build
+        description: '{{ doc("col_build") }}'
+      - name: version
+        description: '{{ doc("col_version") }}'
+      - name: session_id
+        description: '{{ doc("col_session_id") }}'
+        tests:
+          - not_null
+      - name: session_index
+        description: '{{ doc("col_session_index") }}'
+        tests:
+          - not_null
+      - name: previous_session_id
+        description: '{{ doc("col_previous_session_id") }}'
+      - name: device_user_id
+        description: '{{ doc("col_device_user_id") }}'
+        tests:
+          - not_null
+      - name: session_first_event_id
+        description: '{{ doc("col_session_first_event_id") }}'
+        tests:
+          - not_null
+      - name: app_id
+        description: '{{ doc("col_app_id") }}'
+      - name: platform
+        description: '{{ doc("col_platform") }}'
+      - name: etl_tstamp
+        description: '{{ doc("col_etl_tstamp") }}'
+        tests:
+          - not_null
+      - name: collector_tstamp
+        description: '{{ doc("col_collector_tstamp") }}'
+        tests:
+          - not_null
+      - name: dvce_created_tstamp
+        description: '{{ doc("col_dvce_created_tstamp") }}'
+        tests:
+          - not_null
+      - name: event
+        description: '{{ doc("col_event") }}'
+      - name: event_id
+        description: '{{ doc("col_event_id") }}'
+        tags:
+          - primary-key
+        tests:
+          - unique
+          - not_null
+      - name: name_tracker
+        description: '{{ doc("col_name_tracker") }}'
+      - name: v_tracker
+        description: '{{ doc("col_v_tracker") }}'
+      - name: v_collector
+        description: '{{ doc("col_v_collector") }}'
+      - name: v_etl
+        description: '{{ doc("col_v_etl") }}'
+      - name: user_id
+        description: '{{ doc("col_user_id") }}'
+      - name: user_ipaddress
+        description: '{{ doc("col_user_ipaddress") }}'
+      - name: network_userid
+        description: '{{ doc("col_network_userid") }}'
+        tests:
+          - not_null
+      - name: geo_country
+        description: '{{ doc("col_geo_country") }}'
+      - name: geo_region
+        description: '{{ doc("col_geo_region") }}'
+      - name: geo_city
+        description: '{{ doc("col_geo_city") }}'
+      - name: geo_zipcode
+        description: '{{ doc("col_geo_zipcode") }}'
+      - name: geo_latitude
+        description: '{{ doc("col_geo_latitude") }}'
+      - name: geo_longitude
+        description: '{{ doc("col_geo_longitude") }}'
+      - name: geo_region_name
+        description: '{{ doc("col_geo_region_name") }}'
+      - name: ip_isp
+        description: '{{ doc("col_ip_isp") }}'
+      - name: ip_organization
+        description: '{{ doc("col_ip_organization") }}'
+      - name: ip_domain
+        description: '{{ doc("col_ip_domain") }}'
+      - name: ip_netspeed
+        description: '{{ doc("col_ip_netspeed") }}'
+      - name: se_category
+        description: '{{ doc("col_se_category") }}'
+      - name: se_action
+        description: '{{ doc("col_se_action") }}'
+      - name: se_label
+        description: '{{ doc("col_se_label") }}'
+      - name: se_property
+        description: '{{ doc("col_se_property") }}'
+      - name: se_value
+        description: '{{ doc("col_se_value") }}'
+      - name: tr_orderid
+        description: '{{ doc("col_tr_orderid") }}'
+      - name: tr_affiliation
+        description: '{{ doc("col_tr_affiliation") }}'
+      - name: tr_total
+        description: '{{ doc("col_tr_total") }}'
+      - name: tr_tax
+        description: '{{ doc("col_tr_tax") }}'
+      - name: tr_shipping
+        description: '{{ doc("col_tr_shipping") }}'
+      - name: tr_city
+        description: '{{ doc("col_tr_city") }}'
+      - name: tr_state
+        description: '{{ doc("col_tr_state") }}'
+      - name: tr_country
+        description: '{{ doc("col_tr_country") }}'
+      - name: ti_orderid
+        description: '{{ doc("col_ti_orderid") }}'
+      - name: ti_sku
+        description: '{{ doc("col_ti_sku") }}'
+      - name: ti_name
+        description: '{{ doc("col_ti_name") }}'
+      - name: ti_category
+        description: '{{ doc("col_ti_category") }}'
+      - name: ti_price
+        description: '{{ doc("col_ti_price") }}'
+      - name: ti_quantity
+        description: '{{ doc("col_ti_quantity") }}'
+      - name: useragent
+        description: '{{ doc("col_useragent") }}'
+      - name: dvce_screenwidth
+        description: '{{ doc("col_dvce_screenwidth") }}'
+      - name: dvce_screenheight
+        description: '{{ doc("col_dvce_screenheight") }}'
+      - name: tr_currency
+        description: '{{ doc("col_tr_currency") }}'
+      - name: tr_total_base
+        description: '{{ doc("col_tr_total_base") }}'
+      - name: tr_tax_base
+        description: '{{ doc("col_tr_tax_base") }}'
+      - name: tr_shipping_base
+        description: '{{ doc("col_tr_shipping_base") }}'
+      - name: ti_currency
+        description: '{{ doc("col_ti_currency") }}'
+      - name: ti_price_base
+        description: '{{ doc("col_ti_price_base") }}'
+      - name: base_currency
+        description: '{{ doc("col_base_currency") }}'
+      - name: geo_timezone
+        description: '{{ doc("col_geo_timezone") }}'
+      - name: etl_tags
+        description: '{{ doc("col_etl_tags") }}'
+      - name: dvce_sent_tstamp
+        description: '{{ doc("col_dvce_sent_tstamp") }}'
+        tests:
+          - not_null
+      - name: derived_tstamp
+        description: '{{ doc("col_derived_tstamp") }}'
+        tests:
+          - not_null
+      - name: event_vendor
+        description: '{{ doc("col_event_vendor") }}'
+      - name: event_name
+        description: '{{ doc("col_event_name") }}'
+      - name: event_format
+        description: '{{ doc("col_event_format") }}'
+      - name: event_version
+        description: '{{ doc("col_event_version") }}'
+      - name: event_fingerprint
+        description: '{{ doc("col_event_fingerprint") }}'
+      - name: true_tstamp
+        description: '{{ doc("col_true_tstamp") }}'
+      - name: event_id_dedupe_index
+        description: ''
+      - name: row_count
+        description: ''
+      - name: event_index_in_session
+        description: '{{ doc("col_event_index_in_session") }}'
+  - name: snowplow_mobile_base_app_context
+    description: '{{ doc("table_base_app_context") }}'
+    columns:
+      - name: root_id
+        description: '{{ doc("col_root_id") }}'
+        tests:
+          - not_null:
+              config:
+                enabled: '{{var("snowplow__enable_application_context", false)}}'
+      - name: root_tstamp
+        description: '{{ doc("col_root_tstamp") }}'
+        tests:
+          - not_null:
+              config:
+                enabled: '{{var("snowplow__enable_application_context", false)}}'
+      - name: build
+        description: '{{ doc("col_build") }}'
+      - name: version
+        description: '{{ doc("col_version") }}'
+  - name: snowplow_mobile_base_events_this_run_limits
+    description: '{{ doc("table_base_events_run_limits") }}'
+    columns:
+      - name: lower_limit
+        description: The min `start_tstamp` of all events processed this run
+        tests:
+          - not_null
+      - name: upper_limit
+        description: The max `end_tstamp` of all events processed this run
+        tests:
+          - not_null
+  - name: snowplow_mobile_base_geo_context
+    description: '{{ doc("table_base_geo_context") }}'
+    columns:
+      - name: root_id
+        description: '{{ doc("col_root_id") }}'
+        tests:
+          - not_null:
+              config:
+                enabled: '{{var("snowplow__enable_geolocation_context", false)}}'
+      - name: root_tstamp
+        description: '{{ doc("col_root_tstamp") }}'
+        tests:
+          - not_null:
+              config:
+                enabled: '{{var("snowplow__enable_geolocation_context", false)}}'
+      - name: device_latitude
+        description: '{{ doc("col_device_latitude") }}'
+      - name: device_longitude
+        description: '{{ doc("col_device_longitude") }}'
+      - name: device_latitude_longitude_accuracy
+        description: '{{ doc("col_device_latitude_longitude_accuracy") }}'
+      - name: device_altitude
+        description: '{{ doc("col_device_altitude") }}'
+      - name: device_altitude_accuracy
+        description: '{{ doc("col_device_altitude_accuracy") }}'
+      - name: device_bearing
+        description: '{{ doc("col_device_bearing") }}'
+      - name: device_speed
+        description: '{{ doc("col_device_speed") }}'
+  - name: snowplow_mobile_base_mobile_context
+    description: '{{ doc("table_base_mobile_context") }}'
+    columns:
+      - name: root_id
+        description: '{{ doc("col_root_id") }}'
+        tests:
+          - not_null:
+              config:
+                enabled: '{{var("snowplow__enable_mobile_context", false)}}'
+      - name: root_tstamp
+        description: '{{ doc("col_root_tstamp") }}'
+        tests:
+          - not_null:
+              config:
+                enabled: '{{var("snowplow__enable_mobile_context", false)}}'
+      - name: device_manufacturer
+        description: '{{ doc("col_device_manufacturer") }}'
+      - name: device_model
+        description: '{{ doc("col_device_model") }}'
+      - name: os_type
+        description: '{{ doc("col_os_type") }}'
+      - name: os_version
+        description: '{{ doc("col_os_version") }}'
+      - name: android_idfa
+        description: '{{ doc("col_android_idfa") }}'
+      - name: apple_idfa
+        description: '{{ doc("col_apple_idfa") }}'
+      - name: apple_idfv
+        description: '{{ doc("col_apple_idfv") }}'
+      - name: carrier
+        description: '{{ doc("col_carrier") }}'
+      - name: open_idfa
+        description: '{{ doc("col_open_idfa") }}'
+      - name: network_technology
+        description: '{{ doc("col_network_technology") }}'
+      - name: network_type
+        description: '{{ doc("col_network_type") }}'
+  - name: snowplow_mobile_base_screen_context
+    description: '{{ doc("table_base_screen_context") }}'
+    columns:
+      - name: root_id
+        description: '{{ doc("col_root_id") }}'
+        tests:
+          - not_null:
+              config:
+                enabled: '{{var("snowplow__enable_screen_context", false)}}'
+      - name: root_tstamp
+        description: '{{ doc("col_root_tstamp") }}'
+        tests:
+          - not_null:
+              config:
+                enabled: '{{var("snowplow__enable_screen_context", false)}}'
+      - name: screen_id
+        description: '{{ doc("col_screen_id") }}'
+      - name: screen_name
+        description: '{{ doc("col_screen_name") }}'
+      - name: screen_activity
+        description: '{{ doc("col_screen_activity") }}'
+      - name: screen_fragment
+        description: '{{ doc("col_screen_fragment") }}'
+      - name: screen_top_view_controller
+        description: '{{ doc("col_screen_top_view_controller") }}'
+      - name: screen_type
+        description: '{{ doc("col_screen_type") }}'
+      - name: screen_view_controller
+        description: '{{ doc("col_screen_view_controller") }}'
+  - name: snowplow_mobile_base_session_context
+    description: '{{ doc("table_base_session_context") }}'
+    columns:
+      - name: root_id
+        description: '{{ doc("col_root_id") }}'
+        tests:
+          - not_null
+      - name: root_tstamp
+        description: '{{ doc("col_root_tstamp") }}'
+        tests:
+          - not_null
+      - name: session_id
+        description: '{{ doc("col_session_id") }}'
+      - name: session_index
+        description: '{{ doc("col_session_index") }}'
+      - name: previous_session_id
+        description: '{{ doc("col_previous_session_id") }}'
+      - name: device_user_id
+        description: '{{ doc("col_device_user_id") }}'
+      - name: session_first_event_id
+        description: '{{ doc("col_session_first_event_id") }}'

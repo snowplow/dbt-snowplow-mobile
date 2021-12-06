@@ -1,0 +1,106 @@
+version: 2
+models:
+  - name: snowplow_mobile_users
+    description: '{{ doc("table_users") }}'
+    columns:
+      - name: user_id
+        description: '{{ doc("col_user_id") }}'
+      - name: device_user_id
+        description: '{{ doc("col_device_user_id") }}'
+        tags:
+          - primary-key
+        tests:
+          - unique
+          - not_null
+      - name: network_userid
+        description: '{{ doc("col_network_userid") }}'
+        tests:
+          - not_null
+      - name: start_tstamp
+        description: '{{ doc("col_user_start_tstamp") }}'
+        tests:
+          - not_null
+      - name: end_tstamp
+        description: '{{ doc("col_user_end_tstamp") }}'
+        tests:
+          - not_null
+      - name: model_tstamp
+        description: '{{ doc("col_model_tstamp") }}'
+        tests:
+          - not_null
+      - name: screen_views
+        description: '{{ doc("col_screen_views") }}'
+      - name: screen_names_viewed
+        description: '{{ doc("col_screen_names_viewed") }}'
+      - name: sessions
+        description: '{{ doc("col_sessions") }}'
+        tests:
+          - not_null
+      - name: sessions_duration_s
+        description: '{{ doc("col_sessions_duration_s") }}'
+        tests:
+          - not_null
+      - name: active_days
+        description: '{{ doc("col_active_days") }}'
+        tests:
+          - not_null
+      - name: app_errors
+        description: '{{ doc("col_app_errors") }}'
+      - name: fatal_app_errors
+        description: '{{ doc("col_fatal_app_errors") }}'
+      - name: first_screen_view_name
+        description: '{{ doc("col_first_screen_view_name") }}'
+      - name: first_screen_view_transition_type
+        description: '{{ doc("col_first_screen_view_transition_type") }}'
+      - name: first_screen_view_type
+        description: '{{ doc("col_first_screen_view_type") }}'
+      - name: last_screen_view_name
+        description: '{{ doc("col_last_screen_view_name") }}'
+      - name: last_screen_view_transition_type
+        description: '{{ doc("col_last_screen_view_transition_type") }}'
+      - name: last_screen_view_type
+        description: '{{ doc("col_last_screen_view_type") }}'
+      - name: platform
+        description: '{{ doc("col_platform") }}'
+      - name: dvce_screenwidth
+        description: '{{ doc("col_dvce_screenwidth") }}'
+      - name: dvce_screenheight
+        description: '{{ doc("col_dvce_screenheight") }}'
+      - name: device_manufacturer
+        description: '{{ doc("col_device_manufacturer") }}'
+      - name: device_model
+        description: '{{ doc("col_device_model") }}'
+      - name: os_type
+        description: '{{ doc("col_os_type") }}'
+      - name: first_os_version
+        description: '{{ doc("col_first_os_version") }}'
+      - name: last_os_version
+        description: '{{ doc("col_last_os_version") }}'
+      - name: android_idfa
+        description: '{{ doc("col_android_idfa") }}'
+      - name: apple_idfa
+        description: '{{ doc("col_apple_idfa") }}'
+      - name: apple_idfv
+        description: '{{ doc("col_apple_idfv") }}'
+      - name: open_idfa
+        description: '{{ doc("col_open_idfa") }}'
+      - name: geo_country
+        description: '{{ doc("col_geo_country") }}'
+      - name: geo_region
+        description: '{{ doc("col_geo_region") }}'
+      - name: geo_city
+        description: '{{ doc("col_geo_city") }}'
+      - name: geo_zipcode
+        description: '{{ doc("col_geo_zipcode") }}'
+      - name: geo_latitude
+        description: '{{ doc("col_geo_latitude") }}'
+      - name: geo_longitude
+        description: '{{ doc("col_geo_longitude") }}'
+      - name: geo_region_name
+        description: '{{ doc("col_geo_region_name") }}'
+      - name: geo_timezone
+        description: '{{ doc("col_geo_timezone") }}'
+      - name: first_carrier
+        description: '{{ doc("col_first_carrier") }}'
+      - name: last_carrier
+        description: '{{ doc("col_last_carrier") }}'
