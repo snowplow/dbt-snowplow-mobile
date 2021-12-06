@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: snowplow_mobile_base_sessions_lifecycle_manifest
+    description: '{{ doc("table_base_sessions_lifecycle_manifest") }}'
+    columns:
+      - name: session_id
+        description: '{{ doc("col_domain_sessionid") }}'
+        tags:
+          - primary-key
+        tests:
+          - unique
+          - not_null
+      - name: device_user_id
+        description: ' {{ doc("col_device_user_id") }}'
+        tests:
+          - not_null
+      - name: start_tstamp
+        description: '{{ doc("col_start_tstamp") }}'
+        tests:
+          - not_null
+      - name: end_tstamp
+        description: '{{ doc("col_end_tstamp") }}'
+        tests:
+          - not_null
+  - name: snowplow_mobile_incremental_manifest
+    description: '{{ doc("table_base_incremental_manifest") }}'
+    columns:
+      - name: model
+        description: The name of the model.
+        tags:
+          - primary-key
+        tests:
+          - unique
+          - not_null
+      - name: last_success
+        description: The latest event consumed by the model, based on `collector_tstamp`
