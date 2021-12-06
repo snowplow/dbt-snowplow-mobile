@@ -1,0 +1,103 @@
+name: 'snowplow_mob'
+version: '0.1.0'
+config-version: 2
+
+require-dbt-version: [">=0.18.0", "<0.20.0"]
+
+profile: 'default'
+
+source-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+docs-paths: ["docs"]
+asset-paths: ["assets"]
+
+target-path: "target"
+clean-targets:
+    - "target"
+    - "dbt_modules"
+
+vars:
+  # Sources
+  snowplow__atomic_schema: "atomic" # Only set if not using 'atomic' schema for Snowplow events data
+  # snowplow__database: Only set if not using target.database for Snowplow events data
+  snowplow__events: "{{ source('atomic','events') }}"
+  snowplow__session_context: "{{ source('atomic','com_snowplowanalytics_snowplow_client_session_1') }}"
+  snowplow__mobile_context: "{{ source('atomic','com_snowplowanalytics_snowplow_mobile_context_1') }}"
+  snowplow__geolocation_context: "{{ source('atomic','com_snowplowanalytics_snowplow_geolocation_context_1') }}"
+  snowplow__application_context: "{{ source('atomic','com_snowplowanalytics_mobile_application_1') }}"
+  snowplow__screen_context: "{{ source('atomic','com_snowplowanalytics_mobile_screen_1') }}"
+  snowplow__app_error_context: "{{ source('atomic','com_snowplowanalytics_snowplow_application_error_1') }}"
+  snowplow__screen_view_events: "{{ source('atomic','com_snowplowanalytics_mobile_screen_view_1') }}"
+  snowplow__sessions_table: "{{ ref('snowplow_mob_sessions') }}" # Change to your custom sessions table if you have disabled the standard sessions table in favour of a custom version. Advanced config.
+  # Variables - Standard Config
+  snowplow__start_date: "{{ snowplow_mob.start_date_by_target() }}"
+  snowplow__backfill_limit_days: 1
+  snowplow__app_id: []
+  snowplow__platform: ['mob']
+  snowplow__enable_mobile_context: false
+  snowplow__enable_geolocation_context: false
+  snowplow__enable_application_context: false
+  snowplow__enable_screen_context: false
+  snowplow__enable_app_error_context: false
+  snowplow__derived_tstamp_partitioned: true
+  # Variables - Advanced Config
+  snowplow__lookback_window_hours: 6
+  snowplow__session_lookback_days: 365
+  snowplow__days_late_allowed: 3
+  snowplow__max_session_days: 3
+  snowplow__upsert_lookback_days: 30
+  snowplow__incremental_materialization: "snowplow_incremental"
+
+
+# Remove models from the manifest during run start.
+on-run-start: 
+  - "{{ snowplow_utils.snowplow_delete_from_manifest(var('models_to_remove',[]), ref('snowplow_mob_incremental_manifest')) }}"
+
+# Update manifest table with last event consumed per sucessfully executed node/model
+on-run-end: "{{ snowplow_utils.snowplow_incremental_post_hook('snowplow_mob') }}"
+
+
+# Tag 'snowplow_mob_incremental' allows snowplow_incremental_post_hook to identify Snowplow models
+# and add their last sucessfull collector_tstamp to the manifest.
+models:
+  snowplow_mob:
+    +materialized: view
+    base:
+      manifest:
+        +schema: "snowplow_manifest"
+        default:
+          enabled: "{{ target.type in ['bigquery','snowflake'] | as_bool() }}"
+        redshift_postgres:
+          enabled: "{{ target.type in ['redshift','postgres'] | as_bool() }}"
+      scratch:
+        +schema: "scratch"
+        +tags: "scratch"
+        bigquery:
+          enabled: "{{ target.type == 'bigquery' | as_bool() }}"
+        default:
+          enabled: "{{ target.type in ['redshift','postgres'] | as_bool() }}"
+        snowflake:
+          enabled: "{{ target.type == 'snowflake' | as_bool() }}"
+    screen_views:
+      +schema: "derived"
+      +tags: "snowplow_mob_incremental"
+      scratch:
+        +schema: "scratch"
+        +tags: "scratch"
+        default:
+          enabled: "{{ target.type in ['bigquery','snowflake'] | as_bool() }}"
+        redshift_postgres:
+          enabled: "{{ target.type in ['redshift','postgres'] | as_bool() }}"
+     sessions:
+       +schema: "derived"
+       +tags: "snowplow_mob_incremental"
+       scratch:
+         +schema: "scratch"
+         +tags: "scratch"
+     users:
+       +schema: "derived"
+       +tags: "snowplow_mob_incremental"
+       scratch:
+         +schema: "scratch"
+         +tags: "scratch"
