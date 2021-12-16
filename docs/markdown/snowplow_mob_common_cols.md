@@ -977,10 +977,6 @@ Total duration of a session in seconds
 Unique device user id
 {% enddocs %}
 
-{% docs col_network_userid %}
-Unique network user id for user
-{% enddocs %}
-
 {% docs col_user_end_tstamp %}
 End timestamp for the user interaction
 {% enddocs %}

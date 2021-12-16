@@ -1,16 +1,10 @@
 {% docs table_app_errors %}
-
 Description:-
-
 {% enddocs %}
 
 {% docs table_app_errors_this_run %}
-
 Description:-
-
 {% enddocs %}
-
-
 
 {% docs col_message %}
 Application error message
@@ -49,37 +43,5 @@ Is the error fatal or not - Yes/No
 {% enddocs %}
 
 {% docs col_event_index_in_session %}
-
-{% enddocs %}
-
-{% docs col_version %}
-
-{% enddocs %}
-
-{% docs col_build %}
-
-{% enddocs %}
-
-{% docs col_network_type %}
-
-{% enddocs %}
-
-{% docs col_network_technology %}
-
-{% enddocs %}
-
-{% docs col_carrier %}
-
-{% enddocs %}
-
-{% docs col_useragent %}
-
-{% enddocs %}
-
-{% docs col_event_name %}
-
-{% enddocs %}
-
-{% docs col_event_id %}
 
 {% enddocs %}
