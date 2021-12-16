@@ -82,6 +82,8 @@ models:
           enabled: "{{ target.type == 'snowflake' | as_bool() }}"
     optional_modules:
       app_errors:
+        +schema: "derived"
+        +tags: "snowplow_mob_incremental"
         scratch:
           +schema: "scratch"
           +tags: "scratch"
