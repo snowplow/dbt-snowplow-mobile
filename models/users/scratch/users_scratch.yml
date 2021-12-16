@@ -200,7 +200,7 @@ models:
         tests:
           - unique
           - not_null
-  - name: snowplow_mob_users_session_this_run
+  - name: snowplow_mob_users_sessions_this_run
     description: '{{ doc("table_users_sessions_this_run") }}'
     columns:
       - name: device_user_id

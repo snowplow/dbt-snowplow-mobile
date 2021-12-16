@@ -153,8 +153,8 @@ models:
         tests:
           - unique
           - not_null
-  - name: snowplow_mob_sessions_lasts
-    description: '{{ doc("table_sessions_lasts") }}'
+  - name: snowplow_mob_sessions_sv_details
+    description: '{{ doc("table_sessions_sv_details") }}'
     columns:
       - name: session_id
         description: '{{ doc("col_session_id") }}'
