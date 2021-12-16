@@ -9,7 +9,6 @@
       "field": "start_tstamp",
       "data_type": "timestamp"
     },
-    cluster_by=cluster_by_fields_sessions(),
     tags=["derived"]
   ) 
 }}
