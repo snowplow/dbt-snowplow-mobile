@@ -6,7 +6,7 @@
     tags=["this_run"]
   ) 
 }}
-{%- set lower_limit, upper_limit = snowplow_utils.return_limits_from_model(
+{% set lower_limit, upper_limit = snowplow_utils.return_limits_from_model(
                                       ref('snowplow_mob_base_events_this_run'),
                                       'collector_tstamp',
                                       'collector_tstamp') %}
@@ -81,10 +81,10 @@ select
 
 
     -- app error events
-    {{ get_fields_from_col(
+        {{ get_fields_from_col(
            col_prefix='unstruct_event_com_snowplowanalytics_snowplow_application_error_1_',
            fields=app_error_context_fields(),
-           relation={{ ref('snowplow_mob_base_events_this_run') }},
+           relation=ref('snowplow_mob_base_events_this_run'),
            relation_alias='e') }}
     --from {{ var('snowplow__app_error_context') }} as a
 
