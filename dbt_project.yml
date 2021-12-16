@@ -80,6 +80,17 @@ models:
           enabled: "{{ target.type in ['redshift','postgres'] | as_bool() }}"
         snowflake:
           enabled: "{{ target.type == 'snowflake' | as_bool() }}"
+    optional_modules:
+      app_errors:
+        scratch:
+          +schema: "scratch"
+          +tags: "scratch"
+          bigquery:
+          enabled: "{{ target.type == 'bigquery' | as_bool() }}"
+          default:
+            enabled: "{{ target.type in ['redshift','postgres'] | as_bool() }}"
+          snowflake:
+            enabled: "{{ target.type == 'snowflake' | as_bool() }}"
     screen_views:
       +schema: "derived"
       +tags: "snowplow_mob_incremental"
