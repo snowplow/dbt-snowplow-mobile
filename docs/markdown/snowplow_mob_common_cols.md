@@ -998,7 +998,7 @@ Total session duration for the specific user
 Total number of active days for the user
 {% enddocs %}
 
-{% docs last_carrier %}
+{% docs col_last_carrier %}
 Last carrier provider for user
 {% enddocs %}
 
@@ -1012,4 +1012,40 @@ First Operating System version for user device
 
 {% docs col_last_os_version %}
 Last Operating System version for user device
+{% enddocs %}
+
+{% docs col_screen_view_controller %}
+
+{% enddocs %}
+
+{% docs col_screen_type %}
+
+{% enddocs %}
+
+{% docs col_screen_top_view_controller %}
+
+{% enddocs %}
+
+{% docs col_screen_fragment %}
+
+{% enddocs %}
+
+{% docs col_screen_activity %}
+
+{% enddocs %}
+
+{% docs col_screen_name %}
+
+{% enddocs %}
+
+{% docs col_screen_id %}
+
+{% enddocs %}
+
+{% docs col_domain_sessionid %}
+
+{% enddocs %}
+
+{% docs col_domain_sessionidx %}
+
 {% enddocs %}
