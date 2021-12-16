@@ -1,4 +1,5 @@
 version: 2
+
 models:
   - name: snowplow_mob_app_errors
     description: '{{ doc("table_app_errors") }}'
