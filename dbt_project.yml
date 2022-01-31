@@ -37,6 +37,7 @@ vars:
     snowplow__backfill_limit_days: 30
     snowplow__app_id: []
     snowplow__platform: ['mob']
+    snowplow__session_stitching: true
     # Setting default values for 3 enrichments below throughout package rather than here
     # Workaround for a bug (https://github.com/dbt-labs/dbt-core/issues/3698). 
     # TODO: Return to having default values here once fixed.
@@ -117,6 +118,9 @@ models:
       scratch:
         +schema: "scratch"
         +tags: "scratch"
+    user_mapping:
+      +schema: "derived"
+      +tags: "snowplow_mobile_incremental"
     users:
       +schema: "derived"
       +tags: "snowplow_mobile_incremental"

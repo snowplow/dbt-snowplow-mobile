@@ -26,6 +26,13 @@ select
   es.device_user_id,
   es.network_userid,
 
+  {% if var('snowplow__session_stitching') %}
+    -- updated with mapping as part of post hook on derived sessions table
+    es.device_user_id as stitched_user_id, 
+  {% else %}
+    cast(null as {{ dbt_utils.type_string() }}) as stitched_user_id,
+  {% endif %}
+
   sa.session_duration_s,
   sa.has_install,
   sv.screen_views,
