@@ -3,8 +3,11 @@
     materialized=var("snowplow__incremental_materialization"),
     unique_key='session_id',
     upsert_date_key='start_tstamp',
-    sort='start_tstamp',
-    dist='session_id',
+    partition_by = {
+      "field": "start_tstamp",
+      "data_type": "timestamp"
+    },
+    cluster_by=mobile_cluster_by_fields_sessions_lifecycle(),
     full_refresh=snowplow_mobile.allow_refresh(),
     tags=["manifest"]
   ) 
@@ -13,39 +16,30 @@
 {% set lower_limit, upper_limit, _ = snowplow_utils.return_base_new_event_limits(ref('snowplow_mobile_base_new_event_limits')) %}
 {% set session_lookback_limit = snowplow_utils.get_session_lookback_limit(lower_limit) %}
 {% set is_run_with_new_events = snowplow_utils.is_run_with_new_events('snowplow_mobile') %}
+{% set session_id = snowplow_mobile.get_session_id_path_sql(relation_alias='e') %}
+{% set user_id  = snowplow_mobile.get_device_user_id_path_sql(relation_alias='e')%}
 
-with session_context as (
+with new_events_session_ids as (
   select
-    s.root_id,
-    s.root_tstamp,
-    s.session_id,
-    s.user_id as device_user_id
-
-  from {{ var('snowplow__session_context') }} s
-  where s.root_tstamp between {{ lower_limit }} and {{ upper_limit }}
-)
-
-, new_events_session_ids as (
-  select
-    sc.session_id,
-    max(sc.device_user_id) as device_user_id,
+    {{ session_id }} as session_id,
+    max( {{ user_id }} ) as device_user_id,
     min(e.collector_tstamp) as start_tstamp,
     max(e.collector_tstamp) as end_tstamp
 
   from {{ source('atomic', 'events') }} e
-  inner join session_context sc
-  on e.event_id = sc.root_id
-  and e.collector_tstamp = sc.root_tstamp
 
   where
-    sc.session_id is not null
+    {{ session_id }} is not null
     and e.dvce_sent_tstamp <= {{ snowplow_utils.timestamp_add('day', var("snowplow__days_late_allowed", 3), 'dvce_created_tstamp') }} -- don't process data that's too late
     and e.collector_tstamp >= {{ lower_limit }}
     and e.collector_tstamp <= {{ upper_limit }}
     and {{ snowplow_utils.app_id_filter(var("snowplow__app_id",[])) }}
     and e.platform in ('{{ var("snowplow__platform")|join("','") }}') -- filters for 'mob' by default
     and {{ is_run_with_new_events }} --don't reprocess sessions that have already been processed.
-
+    {% if var('snowplow__derived_tstamp_partitioned', true) and target.type == 'bigquery' | as_bool() %} -- BQ only
+      and e.derived_tstamp >= {{ snowplow_utils.timestamp_add('hour', -1, lower_limit) }}
+      and e.derived_tstamp <= {{ upper_limit }}
+    {% endif %}
   group by 1
   )
 

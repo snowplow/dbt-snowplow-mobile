@@ -1,10 +1,5 @@
 {{ 
   config(
-    partition_by = {
-      "field": "start_tstamp",
-      "data_type": "timestamp"
-    },
-    cluster_by=snowplow_utils.get_cluster_by(bigquery_cols=["user_id"]),
     sort='start_tstamp',
     dist='device_user_id',
     tags=["this_run"]
@@ -72,7 +67,6 @@ from {{ ref('snowplow_mobile_users_aggs') }} as b
 
 inner join {{ ref('snowplow_mobile_users_sessions_this_run') }} as a
 on a.session_id = b.first_session_id
-
 
 inner join {{ ref('snowplow_mobile_users_lasts') }} c
 on b.device_user_id = c.device_user_id
