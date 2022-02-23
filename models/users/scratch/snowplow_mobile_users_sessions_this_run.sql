@@ -1,10 +1,5 @@
 {{ 
   config(
-    partition_by = {
-      "field": "start_tstamp",
-      "data_type": "timestamp"
-    },
-    cluster_by=snowplow_utils.get_cluster_by(bigquery_cols=["device_user_id"]),
     sort='start_tstamp',
     dist='device_user_id',
     tags=["this_run"]

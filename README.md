@@ -32,7 +32,6 @@ Check dbt Hub for the latest installation instructions, or read the [dbt docs][d
 ### Configuration & Operation
 
 Please refer to the [doc site][snowplow-mobile-docs] for extensive details on how to configure and run the package.
-
 #### Contexts
 
 The following contexts can be enabled depending on your tracker configuration:
@@ -43,7 +42,6 @@ The following contexts can be enabled depending on your tracker configuration:
 - Screen context
 
 By default they are disabled. They can be enabled by configuring the `dbt_project.yml` file and setting the appropriate `snowplow__enable_{context_type}_context` variable to `true`.
-
 #### Optional Modules
 
 Currently the app errors module for crash reporting is the only optional module. More will be added in the future as the tracker's functionality expands.

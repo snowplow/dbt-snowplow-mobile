@@ -16,7 +16,7 @@ selectors:
       Suggested testing implementation for the Snowplow Mobile package. Lean approach, essential tests rather than full suite to save cost.
       Tests:
         - All tests on Snowplow Mobile this_run and manifest tables.
-        - Primary key and data tests on the Snowplow Mobile derived tables (page_views, sessions and users)
+        - Primary key and data tests on the Snowplow Mobile derived tables (screen_views, sessions and users)
         - All tests on any custom models in your dbt project, tagged with `snowplow_mobile_incremental`.
     definition:
       union:

@@ -1,13 +1,9 @@
 {{ 
   config(
-    partition_by = {
-      "field": "derived_tstamp",
-      "data_type": "timestamp" 
-    },
     sort='derived_tstamp',
     dist='event_id',
     tags=["this_run"],
-    enabled=var("snowplow__enable_app_errors_module", false)
+    enabled=(var("snowplow__enable_app_errors_module", false) and target.type in ['redshift', 'postgres'] | as_bool())
   ) 
 }}
 {%- set lower_limit, upper_limit = snowplow_utils.return_limits_from_model(

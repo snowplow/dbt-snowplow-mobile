@@ -40,7 +40,7 @@ with events as (
     -- time
     MIN(e.derived_tstamp) as start_tstamp,
     MAX(e.derived_tstamp) as end_tstamp,
-    BOOL_OR(e.event_name = 'application_install') as has_install
+    {{ snowplow_mobile.bool_or("e.event_name = 'application_install'") }} as has_install
 
   from events e
 
