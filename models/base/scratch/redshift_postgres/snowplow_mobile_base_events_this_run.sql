@@ -31,8 +31,8 @@ with events_this_run AS (
   inner join {{ ref('snowplow_mobile_base_sessions_this_run') }} str
   on sc.session_id = str.session_id
 
-  where {{ snowplow_utils.timestamp_diff('e.collector_tstamp', 'str.start_tstamp', 'day')}} <= {{ var("snowplow__max_session_days", 3) }}
-  and {{ snowplow_utils.timestamp_diff('e.dvce_created_tstamp', 'e.dvce_sent_tstamp', 'day') }} <= {{ var("snowplow__days_late_allowed", 3) }}
+  where e.collector_tstamp <= {{ snowplow_utils.timestamp_add('day', var("snowplow__max_session_days", 3), 'str.start_tstamp') }}
+  and e.dvce_sent_tstamp <= {{ snowplow_utils.timestamp_add('day', var("snowplow__days_late_allowed", 3), 'e.dvce_created_tstamp') }}
   and e.collector_tstamp >= {{ lower_limit }}
   and e.collector_tstamp <= {{ upper_limit }}
   and {{ snowplow_utils.app_id_filter(var("snowplow__app_id",[])) }}
