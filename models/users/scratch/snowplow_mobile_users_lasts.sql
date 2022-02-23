@@ -1,6 +1,5 @@
 {{ 
   config(
-    cluster_by=snowplow_utils.get_cluster_by(bigquery_cols=["session_id"]),
     sort='device_user_id',
     dist='device_user_id'
   ) 

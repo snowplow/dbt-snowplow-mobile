@@ -14,12 +14,8 @@ sources:
             description: '{{ doc("col_root_tstamp") }}'
           - name: session_id
             description: '{{ doc("col_session_id") }}'
-            tests:
-              - not_null
           - name: session_index
             description: '{{ doc("col_session_index") }}'
-            tests:
-              - not_null
           - name: previous_session_id
             description: '{{ doc("col_previous_session_id") }}'
           - name: user_id
@@ -158,6 +154,7 @@ sources:
             description: '{{ doc("col_screen_view_type") }}'
       - name: events
         description: '{{ doc("table_events") }}'
+        identifier: "{{ var('snowplow__events_table', 'events') }}"
         columns:
           - name: app_id
             description: '{{ doc("col_app_id") }}'
@@ -165,20 +162,14 @@ sources:
             description: '{{ doc("col_platform") }}'
           - name: etl_tstamp
             description: '{{ doc("col_etl_tstamp") }}'
-            tests:
-              - not_null
           - name: collector_tstamp
             description: '{{ doc("col_collector_tstamp") }}'
-            tests:
-              - not_null
           - name: dvce_created_tstamp
             description: '{{ doc("col_dvce_created_tstamp") }}'
           - name: event
             description: '{{ doc("col_event") }}'
           - name: event_id
             description: '{{ doc("col_event_id") }}'
-            tests:
-              - not_null
           - name: txn_id
             description: '{{ doc("col_txn_id") }}'
           - name: name_tracker
@@ -201,8 +192,6 @@ sources:
             description: '{{ doc("col_domain_sessionidx") }}'
           - name: network_userid
             description: '{{ doc("col_network_userid") }}'
-            tests:
-              - not_null
           - name: geo_country
             description: '{{ doc("col_geo_country") }}'
           - name: geo_region
@@ -411,8 +400,6 @@ sources:
             description: '{{ doc("col_domain_sessionid") }}'
           - name: derived_tstamp
             description: '{{ doc("col_derived_tstamp") }}'
-            tests:
-              - not_null
           - name: event_vendor
             description: '{{ doc("col_event_vendor") }}'
           - name: event_name

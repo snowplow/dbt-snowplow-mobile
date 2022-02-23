@@ -264,13 +264,13 @@ models:
         tests:
           - not_null:
               config:
-                enabled: '{{var("snowplow__enable_application_context", false)}}'
+                enabled: '{{var("snowplow__enable_application_context", false) and target.type in ["redshift", "postgres"] | as_bool() }}'
       - name: root_tstamp
         description: '{{ doc("col_root_tstamp") }}'
         tests:
           - not_null:
               config:
-                enabled: '{{var("snowplow__enable_application_context", false)}}'
+                enabled: '{{var("snowplow__enable_application_context", false) and target.type in ["redshift", "postgres"] | as_bool() }}'
       - name: build
         description: '{{ doc("col_build") }}'
       - name: version
@@ -281,11 +281,15 @@ models:
       - name: lower_limit
         description: The min `start_tstamp` of all events processed this run
         tests:
-          - not_null
+          - not_null:
+              config:
+                enabled: '{{ target.type in ["redshift", "postgres"] | as_bool() }}'
       - name: upper_limit
         description: The max `end_tstamp` of all events processed this run
         tests:
-          - not_null
+          - not_null:
+              config:
+                enabled: '{{ target.type in ["redshift", "postgres"] | as_bool() }}'
   - name: snowplow_mobile_base_geo_context
     description: '{{ doc("table_base_geo_context") }}'
     columns:
@@ -294,13 +298,13 @@ models:
         tests:
           - not_null:
               config:
-                enabled: '{{var("snowplow__enable_geolocation_context", false)}}'
+                enabled: '{{var("snowplow__enable_geolocation_context", false) and target.type in ["redshift", "postgres"] | as_bool() }}'
       - name: root_tstamp
         description: '{{ doc("col_root_tstamp") }}'
         tests:
           - not_null:
               config:
-                enabled: '{{var("snowplow__enable_geolocation_context", false)}}'
+                enabled: '{{var("snowplow__enable_geolocation_context", false) and target.type in ["redshift", "postgres"] | as_bool() }}'
       - name: device_latitude
         description: '{{ doc("col_device_latitude") }}'
       - name: device_longitude
@@ -323,13 +327,13 @@ models:
         tests:
           - not_null:
               config:
-                enabled: '{{var("snowplow__enable_mobile_context", false)}}'
+                enabled: '{{var("snowplow__enable_mobile_context", false) and target.type in ["redshift", "postgres"] | as_bool() }}'
       - name: root_tstamp
         description: '{{ doc("col_root_tstamp") }}'
         tests:
           - not_null:
               config:
-                enabled: '{{var("snowplow__enable_mobile_context", false)}}'
+                enabled: '{{var("snowplow__enable_mobile_context", false) and target.type in ["redshift", "postgres"] | as_bool() }}'
       - name: device_manufacturer
         description: '{{ doc("col_device_manufacturer") }}'
       - name: device_model
@@ -360,13 +364,13 @@ models:
         tests:
           - not_null:
               config:
-                enabled: '{{var("snowplow__enable_screen_context", false)}}'
+                enabled: '{{var("snowplow__enable_screen_context", false) and target.type in ["redshift", "postgres"] | as_bool() }}'
       - name: root_tstamp
         description: '{{ doc("col_root_tstamp") }}'
         tests:
           - not_null:
               config:
-                enabled: '{{var("snowplow__enable_screen_context", false)}}'
+                enabled: '{{var("snowplow__enable_screen_context", false) and target.type in ["redshift", "postgres"] | as_bool() }}'
       - name: screen_id
         description: '{{ doc("col_screen_id") }}'
       - name: screen_name
@@ -387,11 +391,15 @@ models:
       - name: root_id
         description: '{{ doc("col_root_id") }}'
         tests:
-          - not_null
+          - not_null:
+              config:
+                enabled: '{{ target.type in ["redshift", "postgres"] | as_bool() }}'
       - name: root_tstamp
         description: '{{ doc("col_root_tstamp") }}'
         tests:
-          - not_null
+          - not_null:
+              config:
+                enabled: '{{ target.type in ["redshift", "postgres"] | as_bool() }}'
       - name: session_id
         description: '{{ doc("col_session_id") }}'
       - name: session_index

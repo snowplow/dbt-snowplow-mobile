@@ -10,10 +10,10 @@ with goals as (
     select
         sv.session_id,
         MAX(sv.derived_tstamp) as max_tstamp,
-        BOOL_OR(sv.screen_view_name = 'registration') AS has_started_registration,
-        BOOL_OR(sv.screen_view_name = 'my_account') AS has_completed_registration,
-        BOOL_OR(sv.screen_view_name = 'search_results') AS has_used_search,
-        BOOL_OR(sv.screen_view_name = 'products') AS has_viewed_products
+        {{ snowplow_mobile.bool_or("sv.screen_view_name = 'registration'") }} AS has_started_registration,
+        {{ snowplow_mobile.bool_or("sv.screen_view_name = 'my_account'") }} AS has_completed_registration,
+        {{ snowplow_mobile.bool_or("sv.screen_view_name = 'search_results'") }} AS has_used_search,
+        {{ snowplow_mobile.bool_or("sv.screen_view_name = 'products'") }} AS has_viewed_products
 
     from {{ var('snowplow__screen_views_table') }} as sv
     group by 1

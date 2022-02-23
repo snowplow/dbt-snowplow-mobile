@@ -529,15 +529,13 @@ Both the cluster key macros (see above) and the `allow_refresh()` macro can be o
 
 ## Duplicates
 
-This package performs de-duplication on both `event_id`'s and `screen_view_id`'s, in the base and screen views modules respectively. The de-duplication method for Redshift and Postgres is different to BigQuery & Snowflake due to their federated table design. The key difference between the two methodologies is that for Redshift and Postgres an `event_id` may be removed entirely during de-duplication, whereas for BigQuery & Snowflake we keep all `event_id`'s. See below for a detailed explanation.
+This package performs de-duplication on both `event_id`'s and `screen_view_id`'s, in the base and screen views modules respectively. The de-duplication method for Redshift and Postgres is different to BigQuery & Snowflake due to their federated table design for the `event_id`'s. The `screen_view_id` deduplication process is consistent across databases. The key difference between the two methodologies is that for Redshift and Postgres an `event_id` may be removed entirely during de-duplication, whereas for BigQuery & Snowflake we keep all `event_id`'s. See below for a detailed explanation.
 
 ### Redshift & Postgres
 Using `event_id` de-duplication as an example, for duplicates we:
 
 - Keep the first row per `event_id` ordered by `collector_tstamp` i.e. the earliest occurring row.
 - If there are multiple rows with the same `collector_tstamp`, *we discard the event all together*. This is done to avoid 1:many joins when joining on context tables such as the screen view context.
-
-The same methodology is applied to `screen_view_id`s, however we order by `derived_tstamp`.
 
 ### BigQuery & Snowflake
 

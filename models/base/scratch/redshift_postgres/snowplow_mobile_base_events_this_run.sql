@@ -24,7 +24,7 @@ with events_this_run AS (
     e.*,
     dense_rank() over (partition by e.event_id order by e.collector_tstamp) as event_id_dedupe_index --dense_rank so rows with equal tstamps assigned same #
 
-  from {{ var('snowplow__events') }} e
+  from {{ source('atomic', 'events') }} e
   inner join {{ ref('snowplow_mobile_base_session_context') }} sc
   on e.event_id = sc.root_id
   and e.collector_tstamp = sc.root_tstamp

@@ -3,7 +3,7 @@
     unique_key='session_id',
     sort='max_tstamp',
     dist='session_id',
-    cluster_by=snowplow_mobile.cluster_by_fields_sessions(),
+    cluster_by=snowplow_mobile.mobile_cluster_by_fields_sessions(),
     upsert_date_key='max_tstamp',
     materialized='snowplow_incremental',
     tags=["derived"]
