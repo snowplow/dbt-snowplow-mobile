@@ -23,7 +23,7 @@ Each module produces a table which acts as the input to the subsequent module (t
 
 ## Adapter Support
 
-The Snowplow Mobile v0.1.0 package currently supports Redshift & Postgres.
+The Snowplow Mobile v0.2.0 package currently supports Redshift & Postgres.
 
 ## Installation
 
@@ -33,7 +33,7 @@ Check [dbt Hub](https://hub.getdbt.com/snowplow/snowplow_mobile/latest/) for the
 
 ### 1 - Check source data
 
-This package will by default assume your Snowplow events data is contained in the `atomic` schema of your [target.database](https://docs.getdbt.com/docs/running-a-dbt-project/using-the-command-line-interface/configure-your-profile). In order to change this, please add the following to your `dbt_project.yml` file:
+This package will by default assume your Snowplow events data is contained in the `atomic` schema of your [target.database](https://docs.getdbt.com/docs/running-a-dbt-project/using-the-command-line-interface/configure-your-profile), in the table labeled `events`. In order to change this, please add the following to your `dbt_project.yml` file:
 
 ```yml
 # dbt_project.yml
@@ -42,6 +42,7 @@ vars:
   snowplow_mobile:
     snowplow__atomic_schema: schema_with_snowplow_events
     snowplow__database: database_with_snowplow_events
+    snowplow__events_table: table_of_snowplow_events
 ```
 
 In general, when adding new variables to the dbt projext we have to be careful around scoping the variables appropriately, especially when using both the [snowplow-mobile][snowplow-mobile] and the [snowplow-web][snowplow-web] packages. In the example above, we scope the variables to the `snowplow-mobile` project so that these variables do not affect other dbt projects. You can read more about variable scoping in dbt's docs around [variable precedence](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/using-variables#variable-precedence).
@@ -96,6 +97,19 @@ vars:
     snowplow__start_date: 'yyyy-mm-dd'
     snowplow__app_id: ['my_app_1','my_app_2']
 ```
+
+#### BigQuery Only
+
+Verify which column your events table is partitioned on. It will likely be partitioned on `collector_tstamp` or `derived_tstamp`. If it is partitioned on `collector_tstamp` you should set `snowplow__derived_tstamp_partitioned` to `false`. This will ensure only the `collector_tstamp` column is used for partition pruning when querying the events table:
+
+```yml
+# dbt_project.yml
+...
+vars:
+  snowplow_mobile:
+    snowplow__derived_tstamp_partitioned: false
+```
+
 
 ## Configuration
 
@@ -518,10 +532,10 @@ dbt run --model +snowplow_mobile.screen_views --vars "{'models_to_run': '$(dbt l
 
 All the incremental models in the Snowplow mobile package have recommended cluster keys applied to them. Depending on your specific use case, you may want to change or disable these all together. This can be achieved by overriding the following macros with your own version within your project:
 
-- `cluster_by_fields_sessions_lifecycle()`
-- `cluster_by_fields_screen_views()`
-- `cluster_by_fields_sessions()`
-- `cluster_by_fields_users()`
+- `mobile_cluster_by_fields_sessions_lifecycle()`
+- `mobile_cluster_by_fields_screen_views()`
+- `mobile_cluster_by_fields_sessions()`
+- `mobile_cluster_by_fields_users()`
 
 ### Overriding Macros
 
