@@ -54,12 +54,13 @@ Assuming your tracker is capturing `application_error` events, the module can be
 
 The package contains multiple staging models however the mart models are as follows:
 
-| Model                             | Description                                                                                |
-|-----------------------------------|--------------------------------------------------------------------------------------------|
-| snowplow_mobile_app_errors           | A table of application errors |
-| snowplow_mobile_screen_views         | A table of screen views, including engagement metrics such as scroll depth and engaged time. |
-| snowplow_mobile_sessions             | An aggregated table of page views, grouped on `session_id`.                          |
-| snowplow_mobile_users                | An aggregated table of sessions to a user level, grouped on `device_user_id`.               |
+| Model                             | Description                                                                                  |
+|-----------------------------------|----------------------------------------------------------------------------------------------|
+| snowplow_mobile_app_errors        | A table of application errors.                                                               |
+| snowplow_mobile_screen_views      | A table of screen views, including engagement metrics such as scroll depth and engaged time. |
+| snowplow_mobile_sessions          | An aggregated table of page views, grouped on `session_id`.                                  |
+| snowplow_mobile_users             | An aggregated table of sessions to a user level, grouped on `device_user_id`.                |
+| snowplow_mobile_user_mapping      | Provides a mapping between user identifiers, `device_user_id` and `user_id`.                 |
 
 # Join the Snowplow community
 

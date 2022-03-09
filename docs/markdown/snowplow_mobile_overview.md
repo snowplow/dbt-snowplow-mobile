@@ -16,6 +16,7 @@ This model consists of a series of modules, each producing a table which serves 
 - Screen Views: Aggregates event level data to a screen view level, on `screen_view_id`.
 - Sessions: Aggregates screen view level data to a session level, on `session_id`.
 - Users: Aggregates session level data to a users level, on `device_user_id`.
+- User Mapping: Provides a mapping between user identifiers, `device_user_id` and `user_id`. This can be used for session stitching.
 
 The 'standard' modules can be thought of as source code for the core logic of the model, which Snowplow maintains. These modules carry out the incremental logic in such a way as custom modules can be written to plug into the model's structure, without needing to write a parallel incremental logic. We recommend that all customisations are written in this way, which allows us to safely maintain and roll out updates to the model, without impact on dependent custom sql.
 
@@ -181,6 +182,8 @@ This package makes use of a series of other variables, which are all set to the 
 `snowplow__allow_refresh`:          Default `False`. Used as the default value to return from the `allow_refresh()` macro. This macro determines whether the manifest tables can be refreshed or not, depending on your environment. See the 'Manifest Tables' section for more details.
 
 `snowplow__dev_target_name`:        Default: `dev`. The [target name](https://docs.getdbt.com/reference/profiles.yml) of your development environment as defined in your `profiles.yml` file. See the 'Manifest Tables' section for more details.
+
+`snowplow__session_stitching`:      Default: `True`. Determines whether to apply the user mapping to the sessions table. Please see the 'User Mapping' section for more details.
 
 ## YAML Selectors
 
@@ -497,6 +500,26 @@ The snowplow-utils package provides the [combine_column_versions](https://github
 
 Please refer to the [snowplow-utils][snowplow-utils] docs for the full documentation on these macros.
 
+## User Mapping
+
+This package contains a User Mapping module that aims to link user identifiers, namely `device_user_id` to `user_id`. The logic is to take the latest `user_id` per `device_user_id`.
+
+The `device_user_id` is device based and can change over time, whereas the `user_id` is typically populated when a user logs in with your own internal identifier (dependent on your tracking implementation).
+
+This mapping is applied to the sessions table by a post-hook which updates the `stitched_user_id` column with the latest mapping. If no mapping is present, the default value for `stitched_user_id`  is the `device_user_id`. This process is known as session stitching, and effectively allows you to attribute logged-in and non-logged-in sessions back to a single user.
+
+If required, this update operation can be disabled by setting in your `project.yml` file:
+
+```yml
+# dbt_project.yml
+...
+vars:
+  snowplow_mobile:
+    snowplow__session_stitching: false
+```
+
+User mapping is typically not a 'one size fits all' exercise. Depending on your tracking implementation, business needs and desired level of sophistication you may want to write bespoke logic. Please refer to this [blog post (about the web model)][user-mapping-blog] for ideas.
+
 ## Incremental Materialization
 
 This package makes use of the `snowplow_incremental` materialization from the `snowplow_utils` package for the incremental models. This builds upon the out-of-the-box incremental materialization provided by dbt. Its key advantage is that it limits table scans on the target table when updating/inserting based on the new data. This improves performance and reduces cost.
@@ -603,6 +626,7 @@ limitations under the License.
 [snowplow-github-docs]: https://snowplow.github.io/dbt-snowplow-mobile/#!/overview
 [snowplow-mobile]: https://github.com/snowplow/dbt-snowplow-mobile
 [snowplow-web]: https://github.com/snowplow/dbt-snowplow-web
+[user-mapping-blog]: https://snowplowanalytics.com/blog/2021/02/24/developing-a-single-customer-view-with-snowplow/
 
 {% endraw %}
 {% enddocs %}
