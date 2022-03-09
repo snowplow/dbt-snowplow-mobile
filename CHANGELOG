@@ -1,3 +1,8 @@
+snowplow-mobile 0.3.0 (2022-03-09)
+---------------------------------------
+Drop support for dbt versions before 1.0.0 (Close #14)
+Add user_mapping module like in web model (Close #10)
+
 snowplow-mobile 0.2.0 (2022-02-24)
 ---------------------------------------
 Update documentation (Close #12)
