@@ -10,7 +10,10 @@
       "data_type": "timestamp"
     },
     cluster_by=snowplow_mobile.mobile_cluster_by_fields_sessions(),
-    tags=["derived"]
+    tags=["derived"],
+    post_hook="{{ snowplow_mobile.stitch_user_identifiers(
+      enabled=var('snowplow__session_stitching')
+      ) }}"
   ) 
 }}
 
