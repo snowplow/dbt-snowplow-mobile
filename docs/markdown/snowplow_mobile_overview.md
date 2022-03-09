@@ -24,7 +24,7 @@ Each module produces a table which acts as the input to the subsequent module (t
 
 ## Adapter Support
 
-The Snowplow Mobile v0.2.0 package currently supports Redshift & Postgres.
+The Snowplow Mobile v0.3.0 package currently supports BigQuery, Postgres, Redshift & Snowflake.
 
 ## Installation
 
@@ -592,7 +592,7 @@ If you find a bug, please report an issue on GitHub.
 
 # Copyright and license
 
-The snowplow-mobile package is Copyright 2021 Snowplow Analytics Ltd.
+The snowplow-mobile package is Copyright 2021-2022 Snowplow Analytics Ltd.
 
 Licensed under the [Apache License, Version 2.0][license] (the "License");
 you may not use this software except in compliance with the License.
