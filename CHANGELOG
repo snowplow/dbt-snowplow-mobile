@@ -1,3 +1,8 @@
+snowplow-mobile 0.3.1 (2022-03-11)
+---------------------------------------
+Fix user_mapping bug with differing column lengths (Close #18)
+Clean up incremental manifest varchar logic (Close #20)
+
 snowplow-mobile 0.3.0 (2022-03-09)
 ---------------------------------------
 Drop support for dbt versions before 1.0.0 (Close #14)
