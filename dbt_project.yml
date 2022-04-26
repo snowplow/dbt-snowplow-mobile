@@ -57,6 +57,7 @@ vars:
     snowplow__dev_target_name: 'dev'
     snowplow__has_log_enabled: true
     snowplow__allow_refresh: false
+    snowplow__query_tag: "snowplow_dbt"
 
 
 # Remove models from the manifest during run start.
