@@ -2,7 +2,8 @@
   config(
     cluster_by=snowplow_utils.get_cluster_by(bigquery_cols=["session_id"]),
     sort='session_id',
-    dist='session_id'
+    dist='session_id',
+    sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt'))
   ) 
 }}
 
