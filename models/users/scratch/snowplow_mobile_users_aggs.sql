@@ -6,7 +6,8 @@
     },
     cluster_by=snowplow_utils.get_cluster_by(bigquery_cols=["device_user_id"]),
     sort='device_user_id',
-    dist='device_user_id'
+    dist='device_user_id',
+    sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt'))
   ) 
 }}
 
