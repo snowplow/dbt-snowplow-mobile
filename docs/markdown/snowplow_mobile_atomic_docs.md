@@ -1,40 +1,40 @@
 {% docs table_session_context %}
 
-This context table contains the `session_id` associated with a given mobile event.
+**Redshift and Postgres only**. This context table contains the `session_id` associated with a given mobile event.
 
 {% enddocs %}
 
 {% docs table_mobile_context %}
 
-This context table contains various mobile device details and identifiers.
+**Redshift and Postgres only**. This context table contains various mobile device details and identifiers.
 
 {% enddocs %}
 
 
 {% docs table_geolocation_context %}
 
-This context table contains geolocation data collected from the device.
+**Redshift and Postgres only**. This context table contains geolocation data collected from the device.
 
 {% enddocs %}
 
 
 {% docs table_app_context %}
 
-This context table contains app build and version details.
+**Redshift and Postgres only**. This context table contains app build and version details.
 
 {% enddocs %}
 
 
 {% docs table_screen_context %}
 
-This context table contains the `screen_id` associated with a given mobile event.
+**Redshift and Postgres only**. This context table contains the `screen_id` associated with a given mobile event.
 
 {% enddocs %}
 
 
 {% docs table_app_errors_context %}
 
-This context table contains information about any errors thrown by the application.
+**Redshift and Postgres only**. This context table contains information about any errors thrown by the application.
 
 {% enddocs %}
 
