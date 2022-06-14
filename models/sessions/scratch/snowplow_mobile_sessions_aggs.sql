@@ -1,14 +1,14 @@
-{{ 
+{{
   config(
-    partition_by = {
+    partition_by = snowplow_utils.get_partition_by(bigquery_partition_by={
       "field": "start_tstamp",
       "data_type": "timestamp"
-    },
+    }),
     cluster_by=snowplow_utils.get_cluster_by(bigquery_cols=["session_id"]),
     sort='session_id',
     dist='session_id',
     sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt'))
-  ) 
+  )
 }}
 
 with events as (
@@ -61,7 +61,7 @@ with events as (
   {% else %}
     select
       {% if target.type == 'postgres' %}
-        cast(null as uuid) as session_id, 
+        cast(null as uuid) as session_id,
       {% else %}
         cast(null as {{dbt_utils.type_string() }}) as session_id,
       {% endif %}
@@ -84,7 +84,6 @@ select
   ae.app_errors,
   ae.fatal_app_errors
 
-
 from session_aggs sa
 left join app_errors ae
-on sa.session_id = ae.session_id  
+on sa.session_id = ae.session_id

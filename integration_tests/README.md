@@ -16,8 +16,9 @@ bash integration_tests.sh -d {warehouse}
 
 Supported warehouses:
 
-- redshift
 - bigquery
-- snowflake
+- databricks
 - postgres
+- redshift
+- snowflake
 - all (iterates through all supported warehouses)

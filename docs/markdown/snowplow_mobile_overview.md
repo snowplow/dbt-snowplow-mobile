@@ -24,7 +24,7 @@ Each module produces a table which acts as the input to the subsequent module (t
 
 ## Adapter Support
 
-The Snowplow Mobile v0.3.2 package currently supports BigQuery, Postgres, Redshift & Snowflake.
+The Snowplow Mobile v0.3.2 package currently supports BigQuery, Databricks, Postgres, Redshift & Snowflake.
 
 ## Installation
 
@@ -48,6 +48,7 @@ vars:
 
 In general, when adding new variables to the dbt projext we have to be careful around scoping the variables appropriately, especially when using both the [snowplow-mobile][snowplow-mobile] and the [snowplow-web][snowplow-web] packages. In the example above, we scope the variables to the `snowplow-mobile` project so that these variables do not affect other dbt projects. You can read more about variable scoping in dbt's docs around [variable precedence](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/using-variables#variable-precedence).
 
+**Please note that your `target.database` is NULL if using Databricks. In Databricks, schemas and databases are used interchangeably and in the dbt implementation of Databricks therefore we always use the schema value, so adjust your `snowplow__atomic_schema` value if you need to.**
 ### 2 - Enabled desired contexts
 
 The mobile package has the option to join in data from the following 4 Snowplow contexts:
@@ -203,7 +204,7 @@ These are defined in the [`selectors.yml` file][selectors-yml-file] within the p
 The Snowplow mobile model is designed to be run as a whole, which ensures all incremental tables are kept in sync. As such, run the model using:
 
 ```bash
-dbt run --models snowplow_mobile tag:snowplow_mobile_incremental
+dbt run --select snowplow_mobile tag:snowplow_mobile_incremental
 ```
 
 The `snowplow_mobile` selection will execute all nodes within the Snowplow mobile package, while the `tag:snowplow_mobile_incremental` will execute all custom modules that you may have created.
@@ -238,7 +239,7 @@ While you can drop and recompute the incremental tables within this package usin
 In order to drop all the manifest tables and start again set the `snowplow__allow_refresh` var to `true` at run time:
 
 ```bash
-dbt run --models snowplow_mobile tag:snowplow_mobile_incremental --full-refresh --vars 'snowplow__allow_refresh: true'
+dbt run --select snowplow_mobile tag:snowplow_mobile_incremental --full-refresh --vars 'snowplow__allow_refresh: true'
 # or using selector flag
 dbt run --selector snowplow_mobile --full-refresh --vars 'snowplow__allow_refresh: true'
 ```
@@ -254,8 +255,8 @@ During back-filling, the derived screen views, sessions and users tables are blo
 Back-filling a module can be performed either as part of the entire run of the Snowplow mobile package, or in isolation to reduce cost (recommended):
 
 ```bash
-dbt run --models snowplow_mobile tag:snowplow_mobile_incremental # Will execute all Snowplow mobile modules, as well as custom.
-dbt run --models +my_custom_module # Will execute only your custom module + any upstream nodes.
+dbt run --select snowplow_mobile tag:snowplow_mobile_incremental # Will execute all Snowplow mobile modules, as well as custom.
+dbt run --select +my_custom_module # Will execute only your custom module + any upstream nodes.
 ```
 
 ### Tearing down a subset of models
@@ -263,7 +264,7 @@ dbt run --models +my_custom_module # Will execute only your custom module + any 
 As the code base for your custom modules evolves, you will likely need to replay events through a given module. In order to do so, the models within your custom module need to be removed from the `snowplow_mobile_incremental_manifest` table. See the 'Complete refresh' section for an explanation as to why. This removal can be achieved by passing the model's name to the `models_to_remove'` var at run time. If you want to replay events through a series of dependent models, you only need to pass the name of the endmost model within the run:
 
 ```bash
-dbt run --models +snowplow_mobile_custom_incremental_model --full-refresh --vars 'models_to_remove: snowplow_mobile_custom_incremental_model'
+dbt run --select +snowplow_mobile_custom_incremental_model --full-refresh --vars 'models_to_remove: snowplow_mobile_custom_incremental_model'
 ```
 
 By removing the `snowplow_mobile_custom_incremental_model` model from the manifest the mobile packages will be in state 2 and will replay all events.
@@ -350,36 +351,36 @@ Based on the results the mobile model enters 1 of 4 states.
 
 The query returns `models = 0` indicating that no models exist in the manifest.
 
-`lower_limit: snowplow__start_date`  
-`upper_limit: least(current_tstamp, snowplow__start_date + snowplow__backfill_limit_days)`  
+`lower_limit: snowplow__start_date`
+`upper_limit: least(current_tstamp, snowplow__start_date + snowplow__backfill_limit_days)`
 
 #### State 2: New model introduced
 
 `models < size(array_of_snowplow_tagged_enabled_models)` and therefore a new model, tagged with `snowplow_mobile_incremental`, has been added since the last run. The package will replay all previously processed events in order to back-fill the new model.
 
-`lower_limit: snowplow__start_date`  
-`upper_limit: least(max_last_success, snowplow__start_date + snowplow__backfill_limit_days)`  
+`lower_limit: snowplow__start_date`
+`upper_limit: least(max_last_success, snowplow__start_date + snowplow__backfill_limit_days)`
 
 #### State 3: Models out of sync
 
 `min_last_success < max_last_success` and therefore the tagged models are out of sync, for example due to a particular model failing to execute successfully during the previous run. The package will attempt to sync all models.
 
-`lower_limit: min_last_success - snowplow__lookback_window_hours`  
-`upper_limit: least(max_last_success, min_last_success + snowplow__backfill_limit_days)`  
+`lower_limit: min_last_success - snowplow__lookback_window_hours`
+`upper_limit: least(max_last_success, min_last_success + snowplow__backfill_limit_days)`
 
 #### State 4: Standard run
 
 If none of the above criteria are met, then we consider it a 'standard run' and we carry on from the last processed event.
 
-`lower_limit: max_last_success - snowplow__lookback_window_hours`  
-`upper_limit: least(current_tstamp, max_last_success + snowplow__backfill_limit_days)`  
+`lower_limit: max_last_success - snowplow__lookback_window_hours`
+`upper_limit: least(current_tstamp, max_last_success + snowplow__backfill_limit_days)`
 
 **Note in all cases the `upper_limit` is limited by the `snowplow__backfill_limit_days` variable. This protects against back-fills with many rows causing very long run times.**
 
 If you want to check the current state of the mobile model, run the `snowplow_mobile_base_new_event_limits` model. This will log the current state to the CLI while causing no disruption to the incremental processing of events.
 
 ```bash
-dbt run --models snowplow_mobile_base_new_event_limits
+dbt run --select snowplow_mobile_base_new_event_limits
 ...
 00:26:28 | 1 of 1 START table model scratch.snowplow_mobile_base_new_event_limits.. [RUN]
 00:26:29 + Snowplow: Standard incremental run
@@ -408,10 +409,10 @@ The `_this_run` and derived (e.g. `snowplow_mobile_screen_views`, `snowplow_mobi
 
 ### What denotes a custom module?
 
-**Does:**  
+**Does:**
 In short, anything that plugs into the incremental framework provided by this package. Generally speaking any models you create that reference any of the `_this_run` tables from the standard modules are leveraging this framework and therefore need to be tagged with `snowplow_mobile_incremental` (see the tagging section). Such models will typically be materialized as incremental, although for more complex custom modules there may be a series of staging models that ultimately produce a derived incremental model. In this case, all staging models also need to be tagged correctly.
 
-**Doesn't:**  
+**Doesn't:**
 Models that only reference a Snowplow mobile derived table as their input, rather than a `_this_run` table. Since these derived tables are materialized as incremental they contain all historic events. Any models you build that reference these tables can therefore by written in a drop and recompute manner i.e. materialized as a table. This means they do not leverage the incremental framework of this package and therefore **should not be tagged.**
 
 ### Inputs for custom modules
@@ -450,7 +451,7 @@ We have created a macro `snowplow_utils.is_run_with_new_events(package_name)`, w
 ```sql
 select
   ...
-from 
+from
 where {{ snowplow_utils.is_run_with_new_events("snowplow_mobile") }}
 ```
 ### Tips for developing custom modules
@@ -489,7 +490,7 @@ vars:
   snowplow_mobile:
     snowplow__start_date: "{{ snowplow_utils.get_value_by_target(
                                       dev_value=snowplow_utils.n_timedeltas_ago(1, 'weeks'),
-                                      default_value='2020-01-01', 
+                                      default_value='2020-01-01',
                                       dev_target_name='dev') }}"
 ```
 
@@ -522,6 +523,8 @@ vars:
 
 User mapping is typically not a 'one size fits all' exercise. Depending on your tracking implementation, business needs and desired level of sophistication you may want to write bespoke logic. Please refer to this [blog post (about the web model)][user-mapping-blog] for ideas.
 
+**User mapping is currently disabled for Databricks due to the inability of Databricks to support a `FROM` clause in an `UPDATE` statement.**
+
 ## Incremental Materialization
 
 This package makes use of the `snowplow_incremental` materialization from the `snowplow_utils` package for the incremental models. This builds upon the out-of-the-box incremental materialization provided by dbt. Its key advantage is that it limits table scans on the target table when updating/inserting based on the new data. This improves performance and reduces cost.
@@ -542,7 +545,7 @@ Please refer to the [snowplow-utils][snowplow-utils] docs for the full documenta
 You may wish to run the modules asynchronously, for instance run the screen views module hourly but the sessions and users modules daily. You would assume this could be achieved using:
 
 ```bash
-dbt run --models +snowplow_mobile.screen_views
+dbt run --select +snowplow_mobile.screen_views
 ```
 
 Currently however it is not possible during a dbt jobs start phase to deduce exactly what models are due to be executed from such a command. This means the package is unable to select the subset of models from the manifest. Instead all models from the standard and custom modules are selected from the manifest and the package will attempt to synchronise all models. This makes the above command unsuitable for asynchronous runs.
