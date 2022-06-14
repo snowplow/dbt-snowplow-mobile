@@ -1,9 +1,9 @@
-{{ 
+{{
   config(
     sort='collector_tstamp',
     dist='event_id',
     tags=["this_run"]
-  ) 
+  )
 }}
 
 {%- set lower_limit, upper_limit = snowplow_utils.return_limits_from_model(ref('snowplow_mobile_base_sessions_this_run'),
@@ -20,11 +20,11 @@ with events_this_run AS (
     sc.previous_session_id,
     sc.device_user_id,
     sc.session_first_event_id,
-    
+
     e.*,
     dense_rank() over (partition by e.event_id order by e.collector_tstamp) as event_id_dedupe_index --dense_rank so rows with equal tstamps assigned same #
 
-  from {{ source('atomic', 'events') }} e
+  from {{ var('snowplow__events') }} e
   inner join {{ ref('snowplow_mobile_base_session_context') }} sc
   on e.event_id = sc.root_id
   and e.collector_tstamp = sc.root_tstamp
@@ -45,7 +45,7 @@ with events_this_run AS (
     count(*) over(partition by e.event_id) as row_count
 
   from events_this_run e
-  
+
   where e.event_id_dedupe_index = 1 -- Keep row(s) with earliest collector_tstamp per dupe event
 )
 

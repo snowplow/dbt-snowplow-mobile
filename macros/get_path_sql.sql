@@ -14,15 +14,27 @@
 {% endmacro %}
 
 {% macro bigquery__get_session_id_path_sql(relation_alias) %}
+
+-- setting relation through variable is not currently supported (recognised as string), different logic for integration tests
+{% if target.schema.startswith('github_snwplow_mobile_dbt_') %}
+
+  {%- set relation=ref('snowplow_mobile_events_stg') %}
+
+{% else %}
+
+  {%- set relation=source('atomic','events') %}
+
+{% endif %}
+
   {%- set session_id = snowplow_utils.combine_column_versions(
-                                  relation=source('atomic','events'),
+                                  relation=relation,
                                   column_prefix='contexts_com_snowplowanalytics_snowplow_client_session_1_',
                                   required_fields=['session_id'],
                                   relation_alias=relation_alias,
                                   include_field_alias=false
                                   )|join('') -%}
-  
-  
+
+
   {{ return(session_id) }}
 
 {% endmacro %}
@@ -45,8 +57,19 @@
 
 {% macro bigquery__get_device_user_id_path_sql(relation_alias) %}
 
+-- setting relation through variable is not currently supported (recognised as string), different logic for integration tests
+{% if target.schema.startswith('github_snwplow_mobile_dbt_') %}
+
+  {%- set relation=ref('snowplow_mobile_events_stg') %}
+
+{% else %}
+
+  {%- set relation=source('atomic','events') %}
+
+{% endif %}
+
   {%- set user_id = snowplow_utils.combine_column_versions(
-                                  relation=source('atomic','events'),
+                                  relation=relation,
                                   column_prefix='contexts_com_snowplowanalytics_snowplow_client_session_1_',
                                   required_fields=['user_id'],
                                   relation_alias=relation_alias,
