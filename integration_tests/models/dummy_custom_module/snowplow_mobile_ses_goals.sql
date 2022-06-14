@@ -6,10 +6,10 @@
     upsert_date_key='max_tstamp',
     sort='max_tstamp',
     dist='session_id',
-    partition_by = {
+    partition_by = snowplow_utils.get_partition_by(bigquery_partition_by= {
       "field": "max_tstamp",
       "data_type": "timestamp"
-    },
+    }),
     cluster_by=["session_id"]
   )
 }}
