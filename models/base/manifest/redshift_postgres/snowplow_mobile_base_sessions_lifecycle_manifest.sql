@@ -1,4 +1,4 @@
-{{ 
+{{
   config(
     materialized=var("snowplow__incremental_materialization"),
     unique_key='session_id',
@@ -7,7 +7,7 @@
     dist='session_id',
     full_refresh=snowplow_mobile.allow_refresh(),
     tags=["manifest"]
-  ) 
+  )
 }}
 
 {% set lower_limit, upper_limit, _ = snowplow_utils.return_base_new_event_limits(ref('snowplow_mobile_base_new_event_limits')) %}
@@ -32,7 +32,7 @@ with session_context as (
     min(e.collector_tstamp) as start_tstamp,
     max(e.collector_tstamp) as end_tstamp
 
-  from {{ source('atomic', 'events') }} e
+  from {{ var('snowplow__events') }} e
   inner join session_context sc
   on e.event_id = sc.root_id
   and e.collector_tstamp = sc.root_tstamp
@@ -49,7 +49,7 @@ with session_context as (
   group by 1
   )
 
-{% if snowplow_utils.snowplow_is_incremental() %} 
+{% if snowplow_utils.snowplow_is_incremental() %}
 
 , previous_sessions as (
   select *
@@ -66,7 +66,7 @@ with session_context as (
     ns.device_user_id,
     least(ns.start_tstamp, coalesce(self.start_tstamp, ns.start_tstamp)) as start_tstamp,
     greatest(ns.end_tstamp, coalesce(self.end_tstamp, ns.end_tstamp)) as end_tstamp -- BQ 1 NULL will return null hence coalesce
-    
+
   from new_events_session_ids ns
   left join previous_sessions as self
     on ns.session_id = self.session_id

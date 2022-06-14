@@ -1,0 +1,703 @@
+name: 'snowplow_mobile_integration_tests'
+version: '0.4.0'
+config-version: 2
+
+profile: 'integration_tests'
+
+model-paths: ["models"]
+analysis-paths: ["analysis"]
+test-paths: ["tests"]
+seed-paths: ["data"]
+macro-paths: ["macros"]
+
+target-path: "target"
+clean-targets:
+    - "target"
+    - "dbt_modules"
+    - "dbt_packages"
+
+quoting:
+  identifier: false
+  schema: false
+
+models:
+  snowplow_mobile_integration_tests:
+    bind: false
+    +schema: "snplw_mobile_int_tests"
+    source:
+      bigquery:
+        +enabled: "{{ target.type == 'bigquery' | as_bool() }}"
+      default:
+        +enabled: "{{ target.type in ['redshift', 'postgres'] | as_bool() }}"
+      snowflake:
+        +enabled: "{{ target.type == 'snowflake' | as_bool() }}"
+    dummy_custom_module:
+      +tags: snowplow_mobile_incremental
+
+vars:
+  snowplow__enable_custom_example: false
+  snowplow_mobile:
+    snowplow__events: "{{ ref('snowplow_mobile_events_stg') }}"
+    snowplow__screen_view_events: "{{ ref('snowplow_mobile_screen_view_context_stg') }}"
+    snowplow__start_date: "2021-03-07"
+    snowplow__backfill_limit_days: 20
+    snowplow__session_context: "{{ ref('snowplow_mobile_session_context_stg') }}"
+    snowplow__enable_mobile_context: false
+    snowplow__enable_geolocation_context: false
+    snowplow__enable_application_context: false
+    snowplow__enable_screen_context: false
+    snowplow__enable_app_errors_module: false
+
+seeds:
+  quote_columns: false
+  snowplow_mobile_integration_tests:
+    +schema: "snplw_mobile_int_tests"
+    source:
+      snowplow_mobile_events:
+        +column_types:
+          app_id: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          platform: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          etl_tstamp: timestamp
+          collector_tstamp: timestamp
+          dvce_created_tstamp: timestamp
+          event: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          event_id: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          txn_id: integer
+          name_tracker: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          v_tracker: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          v_collector: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          v_etl: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          user_id: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          user_ipaddress: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          user_fingerprint: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          domain_userid: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          domain_sessionidx: integer
+          network_userid: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          geo_country: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          geo_region: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          geo_city: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          geo_zipcode: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          geo_latitude: float
+          geo_longitude: float
+          geo_region_name: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          ip_isp: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          ip_organization: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          ip_domain: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          ip_netspeed: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          page_url: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          page_title: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          page_referrer: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          page_urlscheme: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          page_urlhost: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          page_urlport: integer
+          page_urlpath: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          page_urlquery: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          page_urlfragment: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          refr_urlscheme: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          refr_urlhost: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          refr_urlport: integer
+          refr_urlpath: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          refr_urlquery: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          refr_urlfragment: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          refr_medium: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          refr_source: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          refr_term: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          mkt_medium: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          mkt_source: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          mkt_term: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          mkt_content: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          mkt_campaign: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          se_category: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          se_action: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          se_label: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          se_property: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          se_value: float
+          tr_orderid: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          tr_affiliation: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          tr_total: float
+          tr_tax: float
+          tr_shipping: float
+          tr_city: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          tr_state: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          tr_country: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          ti_orderid: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          ti_sku: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          ti_name: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          ti_category: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          ti_price: float
+          ti_quantity: integer
+          pp_xoffset_min: integer
+          pp_xoffset_max: integer
+          pp_yoffset_min: integer
+          pp_yoffset_max: integer
+          useragent: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          br_name: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          br_family: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          br_version: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          br_type: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          br_renderengine: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          br_lang: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          br_features_pdf: boolean
+          br_features_flash: boolean
+          br_features_java: boolean
+          br_features_director: boolean
+          br_features_quicktime: boolean
+          br_features_realplayer: boolean
+          br_features_windowsmedia: boolean
+          br_features_gears: boolean
+          br_features_silverlight: boolean
+          br_cookies: boolean
+          br_colordepth: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          br_viewwidth: integer
+          br_viewheight: integer
+          os_name: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          os_family: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          os_manufacturer: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          os_timezone: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          dvce_type: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          dvce_ismobile: boolean
+          dvce_screenwidth: integer
+          dvce_screenheight: integer
+          doc_charset: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          doc_width: integer
+          doc_height: integer
+          tr_currency: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          tr_total_base: float
+          tr_tax_base: float
+          tr_shipping_base: float
+          ti_currency: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          ti_price_base: float
+          base_currency: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          geo_timezone: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          mkt_clickid: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          mkt_network: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          etl_tags: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          dvce_sent_tstamp: timestamp
+          refr_domain_userid: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          refr_dvce_tstamp: timestamp
+          domain_sessionid: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          derived_tstamp: timestamp
+          event_vendor: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          event_name: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          event_format: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          event_version: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          event_fingerprint: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          true_tstamp: timestamp
+          contexts_com_snowplowanalytics_snowplow_client_session_1_0_1: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+          unstruct_event_com_snowplowanalytics_mobile_screen_view_1_0_0: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+
+
+    expected:
+      bigquery:
+        +enabled: "{{ target.type == 'bigquery' | as_bool() }}"
+        snowplow_mobile_screen_views_expected:
+          +column_types:
+            screen_view_id: string
+            event_id: string
+            app_id: string
+            user_id: string
+            device_user_id: string
+            network_userid: string
+            session_id: string
+            session_index: string
+            previous_session_id: string
+            session_first_event_id: string
+            screen_view_in_session_index: integer
+            screen_views_in_session: integer
+            dvce_created_tstamp: timestamp
+            collector_tstamp: timestamp
+            derived_tstamp: timestamp
+            model_tstamp: timestamp
+            screen_view_name: string
+            screen_view_transition_type: string
+            screen_view_type: string
+            screen_fragment: string
+            screen_top_view_controller: string
+            screen_view_controller: string
+            screen_view_previous_id: string
+            screen_view_previous_name: string
+            screen_view_previous_type: string
+            platform: string
+            dvce_screenwidth: integer
+            dvce_screenheight: integer
+            device_manufacturer: string
+            device_model: string
+            os_type: string
+            os_version: string
+            android_idfa: string
+            apple_idfa: string
+            apple_idfv: string
+            open_idfa: string
+            device_latitude: float
+            device_longitude: float
+            device_latitude_longitude_accuracy: float
+            device_altitude: float
+            device_altitude_accuracy: float
+            device_bearing: float
+            device_speed: float
+            geo_country: string
+            geo_region: string
+            geo_city: string
+            geo_zipcode: string
+            geo_latitude: float
+            geo_longitude: float
+            geo_region_name: string
+            geo_timezone: string
+            user_ipaddress: string
+            useragent: string
+            carrier: string
+            network_technology: string
+            network_type: string
+            build: string
+            version: string
+        snowplow_mobile_sessions_expected:
+          +column_types:
+            app_id: string
+            session_id: string
+            session_index: string
+            previous_session_id: string
+            session_first_event_id: string
+            session_last_event_id: string
+            start_tstamp: timestamp
+            end_tstamp: timestamp
+            model_tstamp: timestamp
+            user_id: string
+            device_user_id: string
+            network_userid: string
+            stitched_user_id: string
+            session_duration_s: integer
+            has_install: boolean
+            screen_views: integer
+            screen_names_viewed: integer
+            app_errors: integer
+            fatal_app_errors: integer
+            first_event_name: string
+            last_event_name: string
+            first_screen_view_name: string
+            first_screen_view_transition_type: string
+            first_screen_view_type: string
+            last_screen_view_name: string
+            last_screen_view_transition_type: string
+            last_screen_view_type: string
+            platform: string
+            dvce_screenwidth: integer
+            dvce_screenheight: integer
+            device_manufacturer: string
+            device_model: string
+            os_type: string
+            os_version: string
+            android_idfa: string
+            apple_idfa: string
+            apple_idfv: string
+            open_idfa: string
+            device_latitude: float
+            device_longitude: float
+            device_latitude_longitude_accuracy: float
+            device_altitude: float
+            device_altitude_accuracy: float
+            device_bearing: float
+            device_speed: float
+            geo_country: string
+            geo_region: string
+            geo_city: string
+            geo_zipcode: string
+            geo_latitude: float
+            geo_longitude: float
+            geo_region_name: string
+            geo_timezone: string
+            user_ipaddress: string
+            useragent: string
+            name_tracker: string
+            v_tracker: string
+            carrier: string
+            network_technology: string
+            network_type: string
+            first_build: string
+            last_build: string
+            first_version: string
+            last_version: string
+        snowplow_mobile_users_expected:
+          +column_types:
+            user_id: string
+            device_user_id: string
+            network_userid: string
+            start_tstamp: timestamp
+            end_tstamp: timestamp
+            model_tstamp: timestamp
+            screen_views: integer
+            screen_names_viewed: integer
+            sessions: integer
+            sessions_duration_s: integer
+            active_days: integer
+            app_errors: integer
+            fatal_app_errors: integer
+            first_screen_view_name: string
+            first_screen_view_transition_type: string
+            first_screen_view_type: string
+            last_screen_view_name: string
+            last_screen_view_transition_type: string
+            last_screen_view_type: string
+            platform: string
+            dvce_screenwidth: integer
+            dvce_screenheight: integer
+            device_manufacturer: string
+            device_model: string
+            os_type: string
+            first_os_version: string
+            last_os_version: string
+            android_idfa: string
+            apple_idfa: string
+            apple_idfv: string
+            open_idfa: string
+            geo_country: string
+            geo_region: string
+            geo_city: string
+            geo_zipcode: string
+            geo_latitude: float
+            geo_longitude: float
+            geo_region_name: string
+            geo_timezone: string
+            first_carrier: string
+            last_carrier: string
+      default:
+        +enabled: "{{ target.type in ['redshift', 'postgres'] | as_bool() }}"
+        snowplow_mobile_screen_views_expected:
+          +column_types:
+            screen_view_id: varchar
+            event_id: varchar
+            app_id: varchar
+            user_id: varchar
+            device_user_id: varchar
+            network_userid: varchar
+            session_id: "{{ 'uuid' if target.type == 'postgres' else 'varchar' }}"
+            session_index: varchar
+            previous_session_id: varchar
+            session_first_event_id: varchar
+            screen_view_in_session_index: integer
+            screen_views_in_session: integer
+            dvce_created_tstamp: timestamp
+            collector_tstamp: timestamp
+            derived_tstamp: timestamp
+            model_tstamp: timestamp
+            screen_view_name: varchar
+            screen_view_transition_type: varchar
+            screen_view_type: varchar
+            screen_fragment: varchar
+            screen_top_view_controller: varchar
+            screen_view_controller: varchar
+            screen_view_previous_id: varchar
+            screen_view_previous_name: varchar
+            screen_view_previous_type: varchar
+            platform: varchar
+            dvce_screenwidth: integer
+            dvce_screenheight: integer
+            device_manufacturer: varchar
+            device_model: varchar
+            os_type: varchar
+            os_version: varchar
+            android_idfa: varchar
+            apple_idfa: varchar
+            apple_idfv: varchar
+            open_idfa: varchar
+            device_latitude: float
+            device_longitude: float
+            device_latitude_longitude_accuracy: float
+            device_altitude: float
+            device_altitude_accuracy: float
+            device_bearing: float
+            device_speed: float
+            geo_country: varchar
+            geo_region: varchar
+            geo_city: varchar
+            geo_zipcode: varchar
+            geo_latitude: float
+            geo_longitude: float
+            geo_region_name: varchar
+            geo_timezone: varchar
+            user_ipaddress: varchar
+            useragent: varchar
+            carrier: varchar
+            network_technology: varchar
+            network_type: varchar
+            build: varchar
+            version: varchar
+        snowplow_mobile_sessions_expected:
+          +column_types:
+            app_id: varchar
+            session_id: "{{ 'uuid' if target.type == 'postgres' else 'varchar' }}"
+            session_index: varchar
+            previous_session_id: varchar
+            session_first_event_id: varchar
+            session_last_event_id: "{{ 'uuid' if target.type == 'postgres' else 'varchar' }}"
+            start_tstamp: timestamp
+            end_tstamp: timestamp
+            model_tstamp: timestamp
+            user_id: varchar
+            device_user_id: varchar
+            network_userid: varchar
+            stitched_user_id: varchar
+            session_duration_s: integer
+            has_install: boolean
+            screen_views: integer
+            screen_names_viewed: integer
+            app_errors: integer
+            fatal_app_errors: integer
+            first_event_name: varchar
+            last_event_name: varchar
+            first_screen_view_name: varchar
+            first_screen_view_transition_type: varchar
+            first_screen_view_type: varchar
+            last_screen_view_name: varchar
+            last_screen_view_transition_type: varchar
+            last_screen_view_type: varchar
+            platform: varchar
+            dvce_screenwidth: integer
+            dvce_screenheight: integer
+            device_manufacturer: varchar
+            device_model: varchar
+            os_type: varchar
+            os_version: varchar
+            android_idfa: varchar
+            apple_idfa: varchar
+            apple_idfv: varchar
+            open_idfa: varchar
+            device_latitude: float
+            device_longitude: float
+            device_latitude_longitude_accuracy: float
+            device_altitude: float
+            device_altitude_accuracy: float
+            device_bearing: float
+            device_speed: float
+            geo_country: varchar
+            geo_region: varchar
+            geo_city: varchar
+            geo_zipcode: varchar
+            geo_latitude: float
+            geo_longitude: float
+            geo_region_name: varchar
+            geo_timezone: varchar
+            user_ipaddress: varchar
+            useragent: varchar
+            name_tracker: varchar
+            v_tracker: varchar
+            carrier: varchar
+            network_technology: varchar
+            network_type: varchar
+            first_build: varchar
+            last_build: varchar
+            first_version: varchar
+            last_version: varchar
+        snowplow_mobile_users_expected:
+          +column_types:
+            user_id: varchar
+            device_user_id: varchar
+            network_userid: varchar
+            start_tstamp: timestamp
+            end_tstamp: timestamp
+            model_tstamp: timestamp
+            screen_views: integer
+            screen_names_viewed: integer
+            sessions: integer
+            sessions_duration_s: integer
+            active_days: integer
+            app_errors: integer
+            fatal_app_errors: integer
+            first_screen_view_name: varchar
+            first_screen_view_transition_type: varchar
+            first_screen_view_type: varchar
+            last_screen_view_name: varchar
+            last_screen_view_transition_type: varchar
+            last_screen_view_type: varchar
+            platform: varchar
+            dvce_screenwidth: integer
+            dvce_screenheight: integer
+            device_manufacturer: varchar
+            device_model: varchar
+            os_type: varchar
+            first_os_version: varchar
+            last_os_version: varchar
+            android_idfa: varchar
+            apple_idfa: varchar
+            apple_idfv: varchar
+            open_idfa: varchar
+            geo_country: varchar
+            geo_region: varchar
+            geo_city: varchar
+            geo_zipcode: varchar
+            geo_latitude: float
+            geo_longitude: float
+            geo_region_name: varchar
+            geo_timezone: varchar
+            first_carrier: varchar
+            last_carrier: varchar
+      snowflake:
+        +enabled: "{{ target.type == 'snowflake' | as_bool() }}"
+        snowplow_mobile_screen_views_expected:
+          +column_types:
+            screen_view_id: varchar
+            event_id: varchar
+            app_id: varchar
+            user_id: varchar
+            device_user_id: varchar
+            network_userid: varchar
+            session_id: varchar
+            session_index: varchar
+            previous_session_id: varchar
+            session_first_event_id: varchar
+            screen_view_in_session_index: integer
+            screen_views_in_session: integer
+            dvce_created_tstamp: timestamp
+            collector_tstamp: timestamp
+            derived_tstamp: timestamp
+            model_tstamp: timestamp
+            screen_view_name: varchar
+            screen_view_transition_type: varchar
+            screen_view_type: varchar
+            screen_fragment: varchar
+            screen_top_view_controller: varchar
+            screen_view_controller: varchar
+            screen_view_previous_id: varchar
+            screen_view_previous_name: varchar
+            screen_view_previous_type: varchar
+            platform: varchar
+            dvce_screenwidth: integer
+            dvce_screenheight: integer
+            device_manufacturer: varchar
+            device_model: varchar
+            os_type: varchar
+            os_version: varchar
+            android_idfa: varchar
+            apple_idfa: varchar
+            apple_idfv: varchar
+            open_idfa: varchar
+            device_latitude: float
+            device_longitude: float
+            device_latitude_longitude_accuracy: float
+            device_altitude: float
+            device_altitude_accuracy: float
+            device_bearing: float
+            device_speed: float
+            geo_country: varchar
+            geo_region: varchar
+            geo_city: varchar
+            geo_zipcode: varchar
+            geo_latitude: float
+            geo_longitude: float
+            geo_region_name: varchar
+            geo_timezone: varchar
+            user_ipaddress: varchar
+            useragent: varchar
+            carrier: varchar
+            network_technology: varchar
+            network_type: varchar
+            build: varchar
+            version: varchar
+        snowplow_mobile_sessions_expected:
+          +column_types:
+            app_id: varchar
+            session_id: varchar
+            session_index: varchar
+            previous_session_id: varchar
+            session_first_event_id: varchar
+            session_last_event_id: varchar
+            start_tstamp: timestamp
+            end_tstamp: timestamp
+            model_tstamp: timestamp
+            user_id: varchar
+            device_user_id: varchar
+            network_userid: varchar
+            stitched_user_id: varchar
+            session_duration_s: integer
+            has_install: boolean
+            screen_views: integer
+            screen_names_viewed: integer
+            app_errors: integer
+            fatal_app_errors: integer
+            first_event_name: varchar
+            last_event_name: varchar
+            first_screen_view_name: varchar
+            first_screen_view_transition_type: varchar
+            first_screen_view_type: varchar
+            last_screen_view_name: varchar
+            last_screen_view_transition_type: varchar
+            last_screen_view_type: varchar
+            platform: varchar
+            dvce_screenwidth: integer
+            dvce_screenheight: integer
+            device_manufacturer: varchar
+            device_model: varchar
+            os_type: varchar
+            os_version: varchar
+            android_idfa: varchar
+            apple_idfa: varchar
+            apple_idfv: varchar
+            open_idfa: varchar
+            device_latitude: float
+            device_longitude: float
+            device_latitude_longitude_accuracy: float
+            device_altitude: float
+            device_altitude_accuracy: float
+            device_bearing: float
+            device_speed: float
+            geo_country: varchar
+            geo_region: varchar
+            geo_city: varchar
+            geo_zipcode: varchar
+            geo_latitude: float
+            geo_longitude: float
+            geo_region_name: varchar
+            geo_timezone: varchar
+            user_ipaddress: varchar
+            useragent: varchar
+            name_tracker: varchar
+            v_tracker: varchar
+            carrier: varchar
+            network_technology: varchar
+            network_type: varchar
+            first_build: varchar
+            last_build: varchar
+            first_version: varchar
+            last_version: varchar
+        snowplow_mobile_users_expected:
+          +column_types:
+            user_id: varchar
+            device_user_id: varchar
+            network_userid: varchar
+            start_tstamp: timestamp
+            end_tstamp: timestamp
+            model_tstamp: timestamp
+            screen_views: integer
+            screen_names_viewed: integer
+            sessions: integer
+            sessions_duration_s: integer
+            active_days: integer
+            app_errors: integer
+            fatal_app_errors: integer
+            first_screen_view_name: varchar
+            first_screen_view_transition_type: varchar
+            first_screen_view_type: varchar
+            last_screen_view_name: varchar
+            last_screen_view_transition_type: varchar
+            last_screen_view_type: varchar
+            platform: varchar
+            dvce_screenwidth: integer
+            dvce_screenheight: integer
+            device_manufacturer: varchar
+            device_model: varchar
+            os_type: varchar
+            first_os_version: varchar
+            last_os_version: varchar
+            android_idfa: varchar
+            apple_idfa: varchar
+            apple_idfv: varchar
+            open_idfa: varchar
+            geo_country: varchar
+            geo_region: varchar
+            geo_city: varchar
+            geo_zipcode: varchar
+            geo_latitude: float
+            geo_longitude: float
+            geo_region_name: varchar
+            geo_timezone: varchar
+            first_carrier: varchar
+            last_carrier: varchar

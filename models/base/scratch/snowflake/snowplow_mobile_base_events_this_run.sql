@@ -1,8 +1,8 @@
-{{ 
+{{
   config(
     tags=["this_run"],
     sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt'))
-  ) 
+  )
 }}
 
 {%- set lower_limit, upper_limit = snowplow_utils.return_limits_from_model(ref('snowplow_mobile_base_sessions_this_run'),
@@ -100,7 +100,7 @@ with events as (
     -- select all from events except non-mobile fields.
     a.*
 
-  from {{ source('atomic', 'events') }} as a
+  from {{ var('snowplow__events') }} as a
   inner join {{ ref('snowplow_mobile_base_sessions_this_run') }} as b
   on {{ session_id }} = b.session_id
 
@@ -124,5 +124,5 @@ with events as (
 select
   d.*,
   row_number() over(partition by d.session_id order by d.derived_tstamp) as event_index_in_session
-    
+
 from deduped_events as d
