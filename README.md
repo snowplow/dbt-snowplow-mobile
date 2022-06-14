@@ -14,12 +14,12 @@ Please refer to the [doc site][snowplow-mobile-docs] for a full breakdown of the
 
 ### Adapter Support
 
-The snowplow-mobile v0.3.2 package currently supports BigQuery, Redshift, Snowflake & Postgres.
+The snowplow-mobile v0.3.2 package currently supports BigQuery, Databricks, Redshift, Snowflake & Postgres.
 
-|                 Warehouse                |     dbt versions    | snowplow-mobile version |
-|:----------------------------------------:|:-------------------:|:--------------------:|
-| BigQuery, Redshift, Snowflake & Postgres | >=1.0.0 to <2.0.0   |         0.3.2        |
-| BigQuery, Redshift, Snowflake & Postgres | >=0.20.0 to <1.0.0  |         0.2.0        |
+|                         Warehouse                    |     dbt versions    | snowplow-mobile version |
+|:----------------------------------------------------:|:-------------------:|:--------------------:|
+| BigQuery, Databricks, Redshift, Snowflake & Postgres | >=1.0.0 to <2.0.0   |         0.4.0        |
+|       BigQuery, Redshift, Snowflake & Postgres       | >=0.20.0 to <1.0.0  |         0.2.0        |
 
 ### Requirements
 

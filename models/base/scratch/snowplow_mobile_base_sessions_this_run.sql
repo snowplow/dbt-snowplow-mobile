@@ -1,13 +1,13 @@
-{{ 
+{{
   config(
     sort='start_tstamp',
     dist='session_id',
     tags=["this_run"],
     sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt'))
-  ) 
+  )
 }}
 
-{%- set lower_limit, 
+{%- set lower_limit,
         upper_limit,
         session_start_limit  = snowplow_utils.return_base_new_event_limits(ref('snowplow_mobile_base_new_event_limits')) %}
 
@@ -15,9 +15,9 @@ select
   s.session_id,
   s.device_user_id,
   s.start_tstamp,
-  -- end_tstamp used in next step to limit events. When backfilling, set end_tstamp to upper_limit if end_tstamp > upper_limit. 
+  -- end_tstamp used in next step to limit events. When backfilling, set end_tstamp to upper_limit if end_tstamp > upper_limit.
   -- This ensures we don't accidentally process events after upper_limit
-  case when s.end_tstamp > {{ upper_limit }} then {{ upper_limit }} else s.end_tstamp end as end_tstamp 
+  case when s.end_tstamp > {{ upper_limit }} then {{ upper_limit }} else s.end_tstamp end as end_tstamp
 
 from {{ ref('snowplow_mobile_base_sessions_lifecycle_manifest')}} s
 

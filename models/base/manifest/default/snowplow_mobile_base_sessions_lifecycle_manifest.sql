@@ -3,10 +3,10 @@
     materialized=var("snowplow__incremental_materialization"),
     unique_key='session_id',
     upsert_date_key='start_tstamp',
-    partition_by = {
+    partition_by = snowplow_utils.get_partition_by(bigquery_partition_by={
       "field": "start_tstamp",
       "data_type": "timestamp"
-    },
+    }, databricks_partition_by='start_tstamp_date'),
     cluster_by=mobile_cluster_by_fields_sessions_lifecycle(),
     full_refresh=snowplow_mobile.allow_refresh(),
     tags=["manifest"],
@@ -86,5 +86,8 @@ select
   sl.device_user_id,
   sl.start_tstamp,
   least({{ snowplow_utils.timestamp_add('day', var("snowplow__max_session_days", 3), 'sl.start_tstamp') }}, sl.end_tstamp) as end_tstamp -- limit session length to max_session_days
+  {% if target.type == 'databricks' -%}
+  , DATE(start_tstamp) as start_tstamp_date
+  {%- endif %}
 
 from session_lifecycle sl
