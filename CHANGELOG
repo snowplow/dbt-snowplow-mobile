@@ -1,3 +1,8 @@
+snowplow-mobile 0.4.0 (2022-06-06)
+---------------------------------------
+Add automated testing to mobile model (Close #5)
+Add support for Databricks (Close #28)
+
 snowplow-mobile 0.3.2 (2022-05-04)
 ---------------------------------------
 Add `query_tag` to Snowflake queries (Close #22)
