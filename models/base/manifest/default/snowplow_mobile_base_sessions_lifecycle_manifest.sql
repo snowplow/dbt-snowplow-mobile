@@ -86,7 +86,7 @@ select
   sl.device_user_id,
   sl.start_tstamp,
   least({{ snowplow_utils.timestamp_add('day', var("snowplow__max_session_days", 3), 'sl.start_tstamp') }}, sl.end_tstamp) as end_tstamp -- limit session length to max_session_days
-  {% if target.type == 'databricks' -%}
+  {% if target.type in ['databricks', 'spark'] -%}
   , DATE(start_tstamp) as start_tstamp_date
   {%- endif %}
 

@@ -48,6 +48,12 @@
 
 {% endmacro %}
 
+{% macro spark__get_session_id_path_sql(relation_alias) %}
+
+  {{ return(snowplow_mobile.databricks__get_session_id_path_sql(relation_alias)) }}
+
+{% endmacro %}
+
 {% macro get_device_user_id_path_sql(relation_alias) %}
 
   {{ return(adapter.dispatch('get_device_user_id_path_sql', 'snowplow_mobile')(relation_alias)) }}
@@ -96,5 +102,11 @@
   {% endset %}
 
   {{ return(user_id) }}
+
+{% endmacro %}
+
+{% macro spark__get_device_user_id_path_sql(relation_alias) %}
+
+  {{ return(snowplow_mobile.databricks__get_device_user_id_path_sql(relation_alias)) }}
 
 {% endmacro %}
