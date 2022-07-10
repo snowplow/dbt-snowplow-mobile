@@ -82,14 +82,14 @@ models:
         redshift_postgres:
           enabled: "{{ target.type in ['redshift','postgres'] | as_bool() }}"
         default:
-          enabled: "{{ target.type in ['bigquery', 'databricks', 'snowflake'] | as_bool() }}"
+          enabled: "{{ target.type in ['bigquery', 'databricks', 'snowflake', 'spark'] | as_bool() }}"
       scratch:
         +schema: "scratch"
         +tags: "scratch"
         bigquery:
           enabled: "{{ target.type == 'bigquery' | as_bool() }}"
         databricks:
-          enabled: "{{ target.type == 'databricks' | as_bool() }}"
+          enabled: "{{ target.type in ['databricks', 'spark'] | as_bool() }}"
         redshift_postgres:
           enabled: "{{ target.type in ['redshift','postgres'] | as_bool() }}"
         snowflake:
@@ -104,7 +104,7 @@ models:
           bigquery:
             enabled: "{{ target.type == 'bigquery' | as_bool() }}"
           databricks:
-            enabled: "{{ target.type == 'databricks' | as_bool() }}"
+            enabled: "{{ target.type in ['databricks', 'spark'] | as_bool() }}"
           redshift_postgres:
             enabled: "{{ target.type in ['redshift','postgres'] | as_bool() }}"
           snowflake:
@@ -116,7 +116,7 @@ models:
         +schema: "scratch"
         +tags: "scratch"
         default:
-          enabled: "{{ target.type in ['bigquery', 'databricks', 'snowflake'] | as_bool() }}"
+          enabled: "{{ target.type in ['bigquery', 'databricks', 'snowflake', 'spark'] | as_bool() }}"
         redshift_postgres:
           enabled: "{{ target.type in ['redshift','postgres'] | as_bool() }}"
     sessions:
