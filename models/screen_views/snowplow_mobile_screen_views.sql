@@ -17,7 +17,7 @@
 
 
 select *
-    {% if target.type == 'databricks' -%}
+    {% if target.type in ['databricks', 'spark'] -%}
     , DATE(derived_tstamp) as derived_tstamp_date
     {%- endif %}
 from {{ ref('snowplow_mobile_screen_views_this_run') }}

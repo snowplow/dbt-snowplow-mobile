@@ -1,6 +1,6 @@
 {% macro stitch_user_identifiers(enabled, relation=this, user_mapping_relation=ref('snowplow_mobile_user_mapping')) %}
 
-  {% if enabled and target.type != 'databricks' | as_bool() %}
+  {% if enabled and target.type not in ['databricks', 'spark'] | as_bool() %}
 
     -- Update sessions table with mapping
     update {{ relation }} as s

@@ -1,7 +1,7 @@
 {{
   config(
     tags=["this_run"],
-    enabled=(var("snowplow__enable_app_errors_module", false) and target.type == 'databricks' | as_bool())
+    enabled=(var("snowplow__enable_app_errors_module", false) and target.type in ['databricks', 'spark'] | as_bool())
   )
 }}
 
