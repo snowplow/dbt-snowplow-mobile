@@ -14,13 +14,13 @@
 
     select
     -- screen view events
-    a.unstruct_event_com_snowplowanalytics_mobile_screen_view_1[0].id::STRING AS screen_view_id,
-    a.unstruct_event_com_snowplowanalytics_mobile_screen_view_1[0].name::STRING AS screen_view_name,
-    a.unstruct_event_com_snowplowanalytics_mobile_screen_view_1[0].previous_id::STRING AS screen_view_previous_id,
-    a.unstruct_event_com_snowplowanalytics_mobile_screen_view_1[0].previous_name::STRING AS screen_view_previous_name,
-    a.unstruct_event_com_snowplowanalytics_mobile_screen_view_1[0].previous_type::STRING AS screen_view_previous_type,
-    a.unstruct_event_com_snowplowanalytics_mobile_screen_view_1[0].transition_type::STRING AS screen_view_transition_type,
-    a.unstruct_event_com_snowplowanalytics_mobile_screen_view_1[0].type::STRING AS screen_view_type,
+    a.unstruct_event_com_snowplowanalytics_mobile_screen_view_1.id::STRING AS screen_view_id,
+    a.unstruct_event_com_snowplowanalytics_mobile_screen_view_1.name::STRING AS screen_view_name,
+    a.unstruct_event_com_snowplowanalytics_mobile_screen_view_1.previous_id::STRING AS screen_view_previous_id,
+    a.unstruct_event_com_snowplowanalytics_mobile_screen_view_1.previous_name::STRING AS screen_view_previous_name,
+    a.unstruct_event_com_snowplowanalytics_mobile_screen_view_1.previous_type::STRING AS screen_view_previous_type,
+    a.unstruct_event_com_snowplowanalytics_mobile_screen_view_1.transition_type::STRING AS screen_view_transition_type,
+    a.unstruct_event_com_snowplowanalytics_mobile_screen_view_1.type::STRING AS screen_view_type,
     -- screen context
     {% if var('snowplow__enable_screen_context', false) %}
       a.contexts_com_snowplowanalytics_mobile_screen_1[0].id::STRING AS screen_id,
