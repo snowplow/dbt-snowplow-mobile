@@ -1,3 +1,7 @@
+snowplow-mobile 0.5.1 (2022-08-01)
+---------------------------------------
+Fix unstruct_events (Close #34)
+
 snowplow-mobile 0.5.0 (2022-07-19)
 ---------------------------------------
 Add support for Databricks via the Spark connector (Close #32)
