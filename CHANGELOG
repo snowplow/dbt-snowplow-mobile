@@ -1,3 +1,7 @@
+snowplow-mobile 0.5.2 (2022-08-22)
+---------------------------------------
+Fix dbt-spark incompatibility for Databricks support (Close #37)
+
 snowplow-mobile 0.5.1 (2022-08-01)
 ---------------------------------------
 Fix unstruct_events (Close #34)
