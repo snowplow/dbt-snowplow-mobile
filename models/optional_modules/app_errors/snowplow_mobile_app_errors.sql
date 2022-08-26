@@ -12,7 +12,11 @@
     cluster_by=snowplow_mobile.cluster_by_fields_app_errors(),
     tags=["derived"],
     enabled=var("snowplow__enable_app_errors_module", false),
-    sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt'))
+    sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt')),
+    tblproperties={
+      'delta.autoOptimize.optimizeWrite' : 'true',
+      'delta.autoOptimize.autoCompact' : 'true'
+    }
   )
 }}
 

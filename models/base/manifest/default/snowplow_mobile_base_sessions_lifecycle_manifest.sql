@@ -10,7 +10,11 @@
     cluster_by=mobile_cluster_by_fields_sessions_lifecycle(),
     full_refresh=snowplow_mobile.allow_refresh(),
     tags=["manifest"],
-    sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt'))
+    sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt')),
+    tblproperties={
+      'delta.autoOptimize.optimizeWrite' : 'true',
+      'delta.autoOptimize.autoCompact' : 'true'
+    }
   )
 }}
 

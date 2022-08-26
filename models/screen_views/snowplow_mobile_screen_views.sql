@@ -11,7 +11,11 @@
      }, databricks_partition_by='derived_tstamp_date'),
     cluster_by=snowplow_mobile.mobile_cluster_by_fields_screen_views(),
     tags=["derived"],
-    sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt'))
+    sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt')),
+    tblproperties={
+      'delta.autoOptimize.optimizeWrite' : 'true',
+      'delta.autoOptimize.autoCompact' : 'true'
+    }
   )
 }}
 
