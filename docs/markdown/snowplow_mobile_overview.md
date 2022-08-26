@@ -100,7 +100,23 @@ vars:
     snowplow__app_id: ['my_app_1','my_app_2']
 ```
 
-#### BigQuery Only
+### 5 - Databricks only - setting the databricks_catalog
+
+Add the following variable to your dbt project's `dbt_project.yml` file
+
+```yml
+# dbt_project.yml
+...
+vars:
+  snowplow_web:
+    snowplow__databricks_catalog: 'hive_metastore'
+```
+Depending on the use case it should either be the catalog (for Unity Catalog users from databricks connector 1.1.1 onwards, defaulted to 'hive_metastore') or the same value as your `snowplow__atomic_schema` (unless changed it should be 'atomic'). This is needed to handle the database property within models/base/src_base.yml.
+
+**A more detailed explanation for how to set up your Databricks configuration properly can be found in [Unity Catalog support](#Unity-Catalog-support).**
+
+
+#### 6 - BigQuery only - setting derived_tstamp_partitioned
 
 Verify which column your events table is partitioned on. It will likely be partitioned on `collector_tstamp` or `derived_tstamp`. If it is partitioned on `collector_tstamp` you should set `snowplow__derived_tstamp_partitioned` to `false`. This will ensure only the `collector_tstamp` column is used for partition pruning when querying the events table:
 
@@ -586,6 +602,29 @@ Using `event_id` de-duplication as an example, for duplicates we:
 - Keep the first row per `event_id` ordered by `collector_tstamp` i.e. the earliest occurring row.
 
 The same methodology is applied to `screen_view_id`s, however we order by `derived_tstamp`.
+
+## Databricks Specific Information
+
+You can connect to Databricks using either the `dbt-spark` or the `dbt-databricks` connectors. The `dbt-spark` adapter does not allow dbt to take advantage of certain features that are unique to Databricks, which you can take advantage of when using the `dbt-databricks` adapter. Where possible, we would recommend using the `dbt-databricks` adapter.
+
+### Unity Catalog support
+
+With the rollout of Unity Catalog (UC), the `dbt-databricks` adapter has added support in dbt for the three-level-namespace as of `dbt-databricks>=1.1.1`. As a result of this, we have introduced the `snowplow__databricks_catalog` variable which should be used **if** your Databricks environment has UC enabled, and you are using a version of the `dbt-databricks` adapter that supports UC. The default value for this variable is `hive_metastore` which is also the default name of your UC, but this can be changed with the `snowplow__databricks_catalog` variable.
+
+Since there are many different situations, we've created the following table to help guide your setup process (this should help resolve the `Cannot set database in Databricks!` error):
+
+|                                             | Adapter supports UC and UC Enabled                                                                     | Adapter supports UC and UC not enabled         | Adapter does not support UC                                                                           |
+|---------------------------------------------|--------------------------------------------------------------------------------------------------------|------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| Events land in default `atomic` schema      | `snowplow__databricks_catalog` = '{name_of_catalog}'                                                   | Nothing needed                                 | `snowplow__atomic_schema` = 'atomic'                                                                                  |
+| Events land in custom schema (not `atomic`) | `snowplow__atomic_schema` = '{name_of_schema}'<br>`snowplow__databricks_catalog` = '{name_of_catalog}' | `snowplow__atomic_schema` = '{name_of_schema}' | `snowplow__atomic_schema` = '{name_of_schema}'<br>`snowplow__databricks_catalog` = '{name_of_schema}' |
+
+### Optimization of models
+
+The `dbt-databricks` adapter allows our data models to take advantage of the auto-optimization features in Databricks. If you are using the `dbt-spark` adapter, you will need to manually alter the table properties of your derived and manifest tables using the following command after running the data model at least once. You will need to run the command in your Databricks environment once for each table, and we would recommend applying this to the tables in the `_derived` and `_snowplow_manifest` schemas:
+
+```SQL
+ALTER TABLE {TABLE_NAME} SET TBLPROPERTIES (delta.autoOptimize.optimizeWrite = true, delta.autoOptimize.autoCompact = true);
+```
 
 # Join the Snowplow community
 
