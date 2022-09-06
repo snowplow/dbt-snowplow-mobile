@@ -1,3 +1,7 @@
+snowplow-mobile 0.5.3 (2022-09-06)
+---------------------------------------
+Optimize performance in Databricks for incremental models (Close #40)
+
 snowplow-mobile 0.5.2 (2022-08-22)
 ---------------------------------------
 Fix dbt-spark incompatibility for Databricks support (Close #37)
