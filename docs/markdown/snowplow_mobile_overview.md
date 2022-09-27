@@ -24,7 +24,7 @@ Each module produces a table which acts as the input to the subsequent module (t
 
 ## Adapter Support
 
-The Snowplow Mobile v0.5.3 package currently supports BigQuery, Databricks, Postgres, Redshift & Snowflake.
+The Snowplow Mobile v0.5.4 package currently supports BigQuery, Databricks, Postgres, Redshift & Snowflake.
 
 ## Installation
 
