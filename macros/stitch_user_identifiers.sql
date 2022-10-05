@@ -8,6 +8,15 @@
     from {{ user_mapping_relation }} as um
     where s.device_user_id = um.device_user_id;
 
+{% elif enabled and target.type in ['databricks', 'spark']  | as_bool() %}
+
+    -- Update sessions table with mapping
+    merge into {{ relation }} as s
+    using {{ user_mapping_relation }} as um
+    on s.device_user_id = um.device_user_id
+    when matched then 
+      update set s.stitched_user_id = um.user_id;
+
   {% endif %}
 
 {% endmacro %}
