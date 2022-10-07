@@ -63,6 +63,8 @@ The package contains multiple staging models however the mart models are as foll
 | snowplow_mobile_users             | An aggregated table of sessions to a user level, grouped on `device_user_id`.                |
 | snowplow_mobile_user_mapping      | Provides a mapping between user identifiers, `device_user_id` and `user_id`.                 |
 
+Please refer to the [dbt doc site][snowplow-mobile-docs-dbt] for details on the model output tables.
+
 # Join the Snowplow community
 
 We welcome all ideas, questions and contributions!
@@ -86,22 +88,23 @@ limitations under the License.
 
 [license]: http://www.apache.org/licenses/LICENSE-2.0
 [license-image]: http://img.shields.io/badge/license-Apache--2-blue.svg?style=flat
-[tracker-classificiation]: https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/tracker-maintenance-classification/
+[tracker-classificiation]: https://docs.snowplow.io/docs/collecting-data/collecting-from-own-applications/tracker-maintenance-classification/
 [early-release]: https://img.shields.io/static/v1?style=flat&label=Snowplow&message=Early%20Release&color=014477&labelColor=9ba0aa&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAeFBMVEVMaXGXANeYANeXANZbAJmXANeUANSQAM+XANeMAMpaAJhZAJeZANiXANaXANaOAM2WANVnAKWXANZ9ALtmAKVaAJmXANZaAJlXAJZdAJxaAJlZAJdbAJlbAJmQAM+UANKZANhhAJ+EAL+BAL9oAKZnAKVjAKF1ALNBd8J1AAAAKHRSTlMAa1hWXyteBTQJIEwRgUh2JjJon21wcBgNfmc+JlOBQjwezWF2l5dXzkW3/wAAAHpJREFUeNokhQOCA1EAxTL85hi7dXv/E5YPCYBq5DeN4pcqV1XbtW/xTVMIMAZE0cBHEaZhBmIQwCFofeprPUHqjmD/+7peztd62dWQRkvrQayXkn01f/gWp2CrxfjY7rcZ5V7DEMDQgmEozFpZqLUYDsNwOqbnMLwPAJEwCopZxKttAAAAAElFTkSuQmCC
 
-[ios-tracker]: https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/objective-c-tracker/
-[android-tracker]: https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/android-tracker/
-[tracker-docs]: https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/
+[ios-tracker]: https://docs.snowplow.io/docs/collecting-data/collecting-from-own-applications/objective-c-tracker/
+[android-tracker]: https://docs.snowplow.io/docs/collecting-data/collecting-from-own-applications/android-tracker/
+[tracker-docs]: https://docs.snowplow.io/docs/collecting-data/collecting-from-own-applications/
 
-[ios-session-context]: https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/mobile-trackers/previous-versions/objective-c-tracker/ios-tracker-1-7-0/#Standard_contexts
-[ios-screen-views]: https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/mobile-trackers/previous-versions/objective-c-tracker/ios-tracker-1-7-0/#tracking-features
-[android-session-context]: https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/mobile-trackers/previous-versions/android-tracker/android-1-7-0/#Standard_contexts
-[android-screen-views]: https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/mobile-trackers/previous-versions/android-tracker/android-1-7-0/#tracking-features
+[ios-session-context]: https://docs.snowplow.io/docs/collecting-data/collecting-from-own-applications/mobile-trackers/previous-versions/objective-c-tracker/ios-tracker-1-7-0/#Standard_contexts
+[ios-screen-views]: https://docs.snowplow.io/docs/collecting-data/collecting-from-own-applications/mobile-trackers/previous-versions/objective-c-tracker/ios-tracker-1-7-0/#tracking-features
+[android-session-context]: https://docs.snowplow.io/docs/collecting-data/collecting-from-own-applications/mobile-trackers/previous-versions/android-tracker/android-1-7-0/#Standard_contexts
+[android-screen-views]: https://docs.snowplow.io/docs/collecting-data/collecting-from-own-applications/mobile-trackers/previous-versions/android-tracker/android-1-7-0/#tracking-features
 
 
 [dbt-package-docs]: https://docs.getdbt.com/docs/building-a-dbt-project/package-management
 
-[discourse-image]: https://img.shields.io/discourse/posts?server=https%3A%2F%2Fdiscourse.snowplowanalytics.com%2F
-[discourse]: http://discourse.snowplowanalytics.com/
+[discourse-image]: https://img.shields.io/discourse/posts?server=https%3A%2F%2Fdiscourse.snowplow.io%2F
+[discourse]: http://discourse.snowplow.io/
 
-[snowplow-mobile-docs]: https://snowplow.github.io/dbt-snowplow-mobile/#!/overview/snowplow_mobile
+[snowplow-mobile-docs-dbt]: https://snowplow.github.io/dbt-snowplow-mobile/#!/overview/snowplow_mobile
+[snowplow-mobile-docs]: https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/
