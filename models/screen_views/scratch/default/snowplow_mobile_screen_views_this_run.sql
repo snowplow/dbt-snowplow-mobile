@@ -1,9 +1,9 @@
-{{ 
+{{
   config(
     cluster_by=snowplow_utils.get_cluster_by(bigquery_cols=["session_id"]),
     tags=["this_run"],
     sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt'))
-  ) 
+  )
 }}
 
 with screen_views_dedupe as (
@@ -114,7 +114,7 @@ select
   ev.dvce_created_tstamp,
   ev.collector_tstamp,
   ev.derived_tstamp,
-  {{ dbt_utils.current_timestamp_in_utc() }} AS model_tstamp,
+  {{ snowplow_utils.current_timestamp_in_utc() }} AS model_tstamp,
 
   ev.screen_view_name,
   ev.screen_view_transition_type,

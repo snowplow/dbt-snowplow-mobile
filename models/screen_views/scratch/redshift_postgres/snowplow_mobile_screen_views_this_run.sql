@@ -1,9 +1,9 @@
-{{ 
+{{
   config(
     sort='derived_tstamp',
     dist='screen_view_id',
     tags=["this_run"]
-  ) 
+  )
 }}
 
 with screen_view_ids as (
@@ -140,7 +140,7 @@ select
   ev.dvce_created_tstamp,
   ev.collector_tstamp,
   ev.derived_tstamp,
-  {{ dbt_utils.current_timestamp_in_utc() }} AS model_tstamp,
+  {{ snowplow_utils.current_timestamp_in_utc() }} AS model_tstamp,
 
   ev.screen_view_name,
   ev.screen_view_transition_type,

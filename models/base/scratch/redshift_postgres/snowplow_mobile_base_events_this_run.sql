@@ -66,13 +66,13 @@ select
     sc.screen_type,
     sc.screen_view_controller,
   {% else %}
-    cast(null as {{ dbt_utils.type_string() }}) as screen_id, --could rename to screen_view_id and coalesce with screen view events.
-    cast(null as {{ dbt_utils.type_string() }}) as screen_name,
-    cast(null as {{ dbt_utils.type_string() }}) as screen_activity,
-    cast(null as {{ dbt_utils.type_string() }}) as screen_fragment,
-    cast(null as {{ dbt_utils.type_string() }}) as screen_top_view_controller,
-    cast(null as {{ dbt_utils.type_string() }}) as screen_type,
-    cast(null as {{ dbt_utils.type_string() }}) as screen_view_controller,
+    cast(null as {{ type_string() }}) as screen_id, --could rename to screen_view_id and coalesce with screen view events.
+    cast(null as {{ type_string() }}) as screen_name,
+    cast(null as {{ type_string() }}) as screen_activity,
+    cast(null as {{ type_string() }}) as screen_fragment,
+    cast(null as {{ type_string() }}) as screen_top_view_controller,
+    cast(null as {{ type_string() }}) as screen_type,
+    cast(null as {{ type_string() }}) as screen_view_controller,
   {% endif %}
   -- mobile context
   {% if var("snowplow__enable_mobile_context", false) %}
@@ -88,17 +88,17 @@ select
     mc.network_technology,
     mc.network_type,
   {% else %}
-    cast(null as {{ dbt_utils.type_string() }}) as device_manufacturer,
-    cast(null as {{ dbt_utils.type_string() }}) as device_model,
-    cast(null as {{ dbt_utils.type_string() }}) as os_type,
-    cast(null as {{ dbt_utils.type_string() }}) as os_version,
-    cast(null as {{ dbt_utils.type_string() }}) as android_idfa,
-    cast(null as {{ dbt_utils.type_string() }}) as apple_idfa,
-    cast(null as {{ dbt_utils.type_string() }}) as apple_idfv,
-    cast(null as {{ dbt_utils.type_string() }}) as carrier,
-    cast(null as {{ dbt_utils.type_string() }}) as open_idfa,
-    cast(null as {{ dbt_utils.type_string() }}) as network_technology,
-    cast(null as {{ dbt_utils.type_string() }}) as network_type,
+    cast(null as {{ type_string() }}) as device_manufacturer,
+    cast(null as {{ type_string() }}) as device_model,
+    cast(null as {{ type_string() }}) as os_type,
+    cast(null as {{ type_string() }}) as os_version,
+    cast(null as {{ type_string() }}) as android_idfa,
+    cast(null as {{ type_string() }}) as apple_idfa,
+    cast(null as {{ type_string() }}) as apple_idfv,
+    cast(null as {{ type_string() }}) as carrier,
+    cast(null as {{ type_string() }}) as open_idfa,
+    cast(null as {{ type_string() }}) as network_technology,
+    cast(null as {{ type_string() }}) as network_type,
   {% endif %}
   -- geo context
   {% if var("snowplow__enable_geolocation_context", false) %}
@@ -110,21 +110,21 @@ select
     gc.device_bearing,
     gc.device_speed,
   {% else %}
-    cast(null as {{ dbt_utils.type_float() }}) as device_latitude,
-    cast(null as {{ dbt_utils.type_float() }}) as device_longitude,
-    cast(null as {{ dbt_utils.type_float() }}) as device_latitude_longitude_accuracy,
-    cast(null as {{ dbt_utils.type_float() }}) as device_altitude,
-    cast(null as {{ dbt_utils.type_float() }}) as device_altitude_accuracy,
-    cast(null as {{ dbt_utils.type_float() }}) as device_bearing,
-    cast(null as {{ dbt_utils.type_float() }}) as device_speed,
+    cast(null as {{ type_float() }}) as device_latitude,
+    cast(null as {{ type_float() }}) as device_longitude,
+    cast(null as {{ type_float() }}) as device_latitude_longitude_accuracy,
+    cast(null as {{ type_float() }}) as device_altitude,
+    cast(null as {{ type_float() }}) as device_altitude_accuracy,
+    cast(null as {{ type_float() }}) as device_bearing,
+    cast(null as {{ type_float() }}) as device_speed,
   {% endif %}
   -- app context
   {% if var("snowplow__enable_application_context", false) %}
     ac.build,
     ac.version,
   {% else %}
-    cast(null as {{ dbt_utils.type_string() }}) as build,
-    cast(null as {{ dbt_utils.type_string() }}) as version,
+    cast(null as {{ type_string() }}) as build,
+    cast(null as {{ type_string() }}) as version,
   {% endif %}
   e.*,
   row_number() over(partition by e.session_id order by e.derived_tstamp) as event_index_in_session

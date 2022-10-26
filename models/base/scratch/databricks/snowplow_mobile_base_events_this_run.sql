@@ -31,13 +31,13 @@
       a.contexts_com_snowplowanalytics_mobile_screen_1[0].type::STRING AS screen_type,
       a.contexts_com_snowplowanalytics_mobile_screen_1[0].view_controller::STRING AS screen_view_controller,
     {% else %}
-      cast(null as {{ dbt_utils.type_string() }}) as screen_id, --could rename to screen_view_id and coalesce with screen view events.
-      cast(null as {{ dbt_utils.type_string() }}) as screen_name,
-      cast(null as {{ dbt_utils.type_string() }}) as screen_activity,
-      cast(null as {{ dbt_utils.type_string() }}) as screen_fragment,
-      cast(null as {{ dbt_utils.type_string() }}) as screen_top_view_controller,
-      cast(null as {{ dbt_utils.type_string() }}) as screen_type,
-      cast(null as {{ dbt_utils.type_string() }}) as screen_view_controller,
+      cast(null as {{ type_string() }}) as screen_id, --could rename to screen_view_id and coalesce with screen view events.
+      cast(null as {{ type_string() }}) as screen_name,
+      cast(null as {{ type_string() }}) as screen_activity,
+      cast(null as {{ type_string() }}) as screen_fragment,
+      cast(null as {{ type_string() }}) as screen_top_view_controller,
+      cast(null as {{ type_string() }}) as screen_type,
+      cast(null as {{ type_string() }}) as screen_view_controller,
     {% endif %}
     -- mobile context
     {% if var('snowplow__enable_mobile_context', false) %}
@@ -53,17 +53,17 @@
       a.contexts_com_snowplowanalytics_snowplow_mobile_context_1[0].network_technology::STRING AS network_technology,
       a.contexts_com_snowplowanalytics_snowplow_mobile_context_1[0].network_type::STRING AS network_type,
     {% else %}
-      cast(null as {{ dbt_utils.type_string() }}) as device_manufacturer,
-      cast(null as {{ dbt_utils.type_string() }}) as device_model,
-      cast(null as {{ dbt_utils.type_string() }}) as os_type,
-      cast(null as {{ dbt_utils.type_string() }}) as os_version,
-      cast(null as {{ dbt_utils.type_string() }}) as android_idfa,
-      cast(null as {{ dbt_utils.type_string() }}) as apple_idfa,
-      cast(null as {{ dbt_utils.type_string() }}) as apple_idfv,
-      cast(null as {{ dbt_utils.type_string() }}) as carrier,
-      cast(null as {{ dbt_utils.type_string() }}) as open_idfa,
-      cast(null as {{ dbt_utils.type_string() }}) as network_technology,
-      cast(null as {{ dbt_utils.type_string() }}) as network_type,
+      cast(null as {{ type_string() }}) as device_manufacturer,
+      cast(null as {{ type_string() }}) as device_model,
+      cast(null as {{ type_string() }}) as os_type,
+      cast(null as {{ type_string() }}) as os_version,
+      cast(null as {{ type_string() }}) as android_idfa,
+      cast(null as {{ type_string() }}) as apple_idfa,
+      cast(null as {{ type_string() }}) as apple_idfv,
+      cast(null as {{ type_string() }}) as carrier,
+      cast(null as {{ type_string() }}) as open_idfa,
+      cast(null as {{ type_string() }}) as network_technology,
+      cast(null as {{ type_string() }}) as network_type,
     {% endif %}
     -- geo context
     {% if var('snowplow__enable_geolocation_context', false) %}
@@ -75,21 +75,21 @@
       a.contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0].bearing::FLOAT AS AS device_bearing,
       a.contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0].speed::FLOAT AS device_speed,
     {% else %}
-      cast(null as {{ dbt_utils.type_float() }}) as device_latitude,
-      cast(null as {{ dbt_utils.type_float() }}) as device_longitude,
-      cast(null as {{ dbt_utils.type_float() }}) as device_latitude_longitude_accuracy,
-      cast(null as {{ dbt_utils.type_float() }}) as device_altitude,
-      cast(null as {{ dbt_utils.type_float() }}) as device_altitude_accuracy,
-      cast(null as {{ dbt_utils.type_float() }}) as device_bearing,
-      cast(null as {{ dbt_utils.type_float() }}) as device_speed,
+      cast(null as {{ type_float() }}) as device_latitude,
+      cast(null as {{ type_float() }}) as device_longitude,
+      cast(null as {{ type_float() }}) as device_latitude_longitude_accuracy,
+      cast(null as {{ type_float() }}) as device_altitude,
+      cast(null as {{ type_float() }}) as device_altitude_accuracy,
+      cast(null as {{ type_float() }}) as device_bearing,
+      cast(null as {{ type_float() }}) as device_speed,
     {% endif %}
     -- app context
     {% if var('snowplow__enable_application_context', false) %}
       a.contexts_com_snowplowanalytics_mobile_application_1[0].build::STRING AS build,
       a.contexts_com_snowplowanalytics_mobile_application_1[0].version::STRING AS version,
     {% else %}
-      cast(null as {{ dbt_utils.type_string() }}) as build,
-      cast(null as {{ dbt_utils.type_string() }}) as version,
+      cast(null as {{ type_string() }}) as build,
+      cast(null as {{ type_string() }}) as version,
     {% endif %}
     -- session context
     a.contexts_com_snowplowanalytics_snowplow_client_session_1[0].session_id::STRING AS session_id,
