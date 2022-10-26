@@ -1,8 +1,8 @@
-{{ 
+{{
   config(
     tags=["this_run"],
     enabled=(var("snowplow__enable_app_errors_module", false) and target.type == 'bigquery' | as_bool())
-  ) 
+  )
 }}
 
 select
@@ -22,7 +22,7 @@ select
   e.dvce_created_tstamp,
   e.collector_tstamp,
   e.derived_tstamp,
-  {{ dbt_utils.current_timestamp_in_utc() }} AS model_tstamp,
+  {{ snowplow_utils.current_timestamp_in_utc() }} AS model_tstamp,
 
   e.platform,
   e.dvce_screenwidth,
@@ -80,5 +80,5 @@ select
       relation_alias='e') }}
 
 from {{ ref('snowplow_mobile_base_events_this_run') }} as e
-    
+
 where e.event_name = 'application_error'

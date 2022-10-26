@@ -1,10 +1,10 @@
-{{ 
+{{
   config(
     sort='start_tstamp',
     dist='device_user_id',
     tags=["this_run"],
     sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt'))
-  ) 
+  )
 }}
 
 select
@@ -16,7 +16,7 @@ select
 
     b.start_tstamp,
     b.end_tstamp,
-    {{ dbt_utils.current_timestamp() }} AS model_tstamp,
+    {{ current_timestamp() }} AS model_tstamp,
 
     -- engagement fields
     b.screen_views,

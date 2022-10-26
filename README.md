@@ -18,7 +18,8 @@ The snowplow-mobile v0.5.5 package currently supports BigQuery, Databricks, Reds
 
 |                         Warehouse                    |     dbt versions    | snowplow-mobile version |
 |:----------------------------------------------------:|:-------------------:|:--------------------:|
-| BigQuery, Databricks, Redshift, Snowflake & Postgres | >=1.0.0 to <2.0.0   |         0.5.5        |
+| BigQuery, Databricks, Redshift, Snowflake & Postgres | >=1.3.0 to <2.0.0   |         0.6.0        |
+| BigQuery, Databricks, Redshift, Snowflake & Postgres | >=1.0.0 to <1.3.0   |         0.5.5        |
 |       BigQuery, Redshift, Snowflake & Postgres       | >=0.20.0 to <1.0.0  |         0.2.0        |
 
 ### Requirements

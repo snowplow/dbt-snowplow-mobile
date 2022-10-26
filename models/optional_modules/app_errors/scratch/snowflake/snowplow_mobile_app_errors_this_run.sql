@@ -1,9 +1,9 @@
-{{ 
+{{
   config(
     tags=["this_run"],
     enabled=(var("snowplow__enable_app_errors_module", false) and target.type == 'snowflake' | as_bool()),
     sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt'))
-  ) 
+  )
 }}
 
 select
@@ -23,7 +23,7 @@ select
   e.dvce_created_tstamp,
   e.collector_tstamp,
   e.derived_tstamp,
-  {{ dbt_utils.current_timestamp_in_utc() }} AS model_tstamp,
+  {{ snowplow_utils.current_timestamp_in_utc() }} AS model_tstamp,
 
   e.platform,
   e.dvce_screenwidth,

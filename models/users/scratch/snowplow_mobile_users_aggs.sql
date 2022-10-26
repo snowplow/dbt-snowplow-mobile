@@ -18,8 +18,8 @@ select
   user_end_tstamp as end_tstamp,
   -- first/last session. Max to resolve edge case with multiple sessions with the same start/end tstamp
   {% if target.type == 'postgres' %}
-    cast(max(case when start_tstamp = user_start_tstamp then cast(session_id as {{ dbt_utils.type_string() }} ) end) as uuid) as first_session_id,
-    cast(max(case when end_tstamp = user_end_tstamp then cast(session_id as {{ dbt_utils.type_string() }} ) end) as uuid) as last_session_id,
+    cast(max(case when start_tstamp = user_start_tstamp then cast(session_id as {{ type_string() }} ) end) as uuid) as first_session_id,
+    cast(max(case when end_tstamp = user_end_tstamp then cast(session_id as {{ type_string() }} ) end) as uuid) as last_session_id,
   {% else %}
     max(case when start_tstamp = user_start_tstamp then session_id end) as first_session_id,
     max(case when end_tstamp = user_end_tstamp then session_id end) as last_session_id,
@@ -29,7 +29,7 @@ select
   sum(screen_names_viewed) as screen_names_viewed,
   count(distinct session_id) as sessions,
   sum(session_duration_s) as sessions_duration_s,
-  count(distinct {{ dbt_utils.date_trunc('day', 'start_tstamp') }}) as active_days,
+  count(distinct {{ date_trunc('day', 'start_tstamp') }}) as active_days,
 
   sum(app_errors) as app_errors,
   sum(fatal_app_errors) as fatal_app_errors
