@@ -1,3 +1,8 @@
+snowplow-mobile 0.5.5 (2022-10-26)
+---------------------------------------
+Add databricks user-stitching (Close #46)
+Migrate core docs to https://docs.snowplow.io/docs (Close #51)
+
 snowplow-mobile 0.5.4 (2022-09-27)
 ---------------------------------------
 Upgrade snowplow_utils package version (Close #43)
