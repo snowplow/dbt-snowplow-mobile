@@ -1,10 +1,10 @@
-{{ 
+{{
   config(
     sort='start_tstamp',
     dist='session_id',
     tags=["this_run"],
     sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt'))
-  ) 
+  )
 }}
 
 select
@@ -20,7 +20,7 @@ select
 
   sa.start_tstamp,
   sa.end_tstamp,
-  {{ dbt_utils.current_timestamp() }} as model_tstamp,
+  {{ snowplow_utils.current_timestamp_in_utc() }} as model_tstamp,
 
   -- user fields
   es.user_id,
@@ -38,8 +38,8 @@ select
   sa.has_install,
   sv.screen_views,
   sv.screen_names_viewed,
-  cast(sa.app_errors as {{ dbt_utils.type_int() }}) as app_errors,
-  cast(sa.fatal_app_errors as {{ dbt_utils.type_int() }}) as fatal_app_errors,
+  cast(sa.app_errors as {{ type_int() }}) as app_errors,
+  cast(sa.fatal_app_errors as {{ type_int() }}) as fatal_app_errors,
 
   es.event_name as first_event_name,
   sa.last_event_name,

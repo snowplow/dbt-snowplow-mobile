@@ -22,7 +22,7 @@ select
   e.dvce_created_tstamp,
   e.collector_tstamp,
   e.derived_tstamp,
-  {{ dbt_utils.current_timestamp_in_utc() }} AS model_tstamp,
+  {{ snowplow_utils.current_timestamp_in_utc() }} AS model_tstamp,
 
   e.platform,
   e.dvce_screenwidth,
