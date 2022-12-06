@@ -14,7 +14,7 @@ with events as (
   select
 
 -- handling relations for integration tests
-  {% if target.schema.startswith('github_snwplow_mobile_dbt_') %}
+  {% if target.schema.startswith('gh_sp_mobile_dbt_') %}
     -- screen view events
     {{ snowplow_utils.get_optional_fields(
           enabled=true,
