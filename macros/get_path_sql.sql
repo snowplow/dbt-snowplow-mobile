@@ -16,7 +16,7 @@
 {% macro bigquery__get_session_id_path_sql(relation_alias) %}
 
 -- setting relation through variable is not currently supported (recognised as string), different logic for integration tests
-{% if target.schema.startswith('github_snwplow_mobile_dbt_') %}
+{% if target.schema.startswith('gh_sp_mobile_dbt_') %}
 
   {%- set relation=ref('snowplow_mobile_events_stg') %}
 
@@ -73,7 +73,7 @@
 {% macro bigquery__get_device_user_id_path_sql(relation_alias) %}
 
 -- setting relation through variable is not currently supported (recognised as string), different logic for integration tests
-{% if target.schema.startswith('github_snwplow_mobile_dbt_') %}
+{% if target.schema.startswith('gh_sp_mobile_dbt_') %}
 
   {%- set relation=ref('snowplow_mobile_events_stg') %}
 
