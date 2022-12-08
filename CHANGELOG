@@ -1,3 +1,15 @@
+snowplow-mobile 0.6.0 (2022-12-08)
+---------------------------------------
+## Summary
+**This release drops support for dbt versions below 1.3.** In order to support the new dbt-utils major release, we need to drop support for dbt versions below 1.3. As a result, we've stopped using macros from dbt-utils which removes the deprecation warnings users were seeing.
+
+## Features
+Drop support for dbt versions below 1.3 (Close #49)
+Add standard actions and templates + change int test schema in macro and model
+
+## Upgrading
+To upgrade simply bump the snowplow-web version in your `packages.yml` file. **You will need dbt v1.3 at least to be able to use this version of the package.**
+
 snowplow-mobile 0.5.5 (2022-10-26)
 ---------------------------------------
 Add databricks user-stitching (Close #46)
