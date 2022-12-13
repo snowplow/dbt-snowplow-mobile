@@ -1,3 +1,15 @@
+snowplow-mobile 0.6.1 (2022-12-13)
+---------------------------------------
+## Summary
+This release alters the Databricks `snowplow_mobile_base_events_this_run` table to include all columns from the events table, in line with Snowflake and BigQuery.
+
+## Features
+Add all columns to `snowplow_mobile_base_events_this_run` for databricks.
+
+## Upgrading
+To upgrade simply bump the snowplow-web version in your `packages.yml` file.  
+Any custom models built directly off `snowplow_mobile_base_events_this_run` in databricks may need altering if you `select *` from this table.
+
 snowplow-mobile 0.6.0 (2022-12-08)
 ---------------------------------------
 ## Summary
