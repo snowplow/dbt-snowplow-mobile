@@ -279,7 +279,10 @@ from {{ ref('snowplow_mobile_events') }}
     contexts_com_snowplowanalytics_snowplow_client_session_1[0]:previous_session_id::varchar AS previousSessionId,
     contexts_com_snowplowanalytics_snowplow_client_session_1[0]:session_id::varchar AS sessionId,
     contexts_com_snowplowanalytics_snowplow_client_session_1[0]:session_index::varchar AS sessionIndex,
-    contexts_com_snowplowanalytics_snowplow_client_session_1[0]:user_id::varchar AS userId
+    contexts_com_snowplowanalytics_snowplow_client_session_1[0]:user_id::varchar AS userId,
+    contexts_com_snowplowanalytics_snowplow_client_session_1[0]:event_index::varchar AS eventIndex,
+    contexts_com_snowplowanalytics_snowplow_client_session_1[0]:storage_mechanism::varchar AS storageMechanism,
+    contexts_com_snowplowanalytics_snowplow_client_session_1[0]:first_event_timestamp::varchar AS firstEventTimestamp
 
 from prep
 )
@@ -414,7 +417,7 @@ select
     event_fingerprint,
     true_tstamp,
     object_construct('id',id,'name',name,'previousId',previousId,'previousName',previousName,'previousType',previousType,'transitionType',transitionType,'type',type) as unstruct_event_com_snowplowanalytics_mobile_screen_view_1,
-    parse_json('[{"firstEventId":"'||firstEventId||'", "previousSessionId":"'||previousSessionId||'", "sessionId":"'||sessionId||'", "sessionIndex":"'||sessionIndex||'", "userId":"'||userId||'"}]' ) as contexts_com_snowplowanalytics_snowplow_client_session_1
+    parse_json('[{"firstEventId":"'||firstEventId||'", "previousSessionId":"'||previousSessionId||'", "sessionId":"'||sessionId||'", "sessionIndex":"'||sessionIndex||'", "userId":"'||userId||'", "eventIndex":"'||eventIndex||'", "storageMechanism":"'||storageMechanism||'", "firstEventTimestamp":"'||firstEventTimestamp||'"}]' ) as contexts_com_snowplowanalytics_snowplow_client_session_1
 
 from flatten
 

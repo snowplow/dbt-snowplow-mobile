@@ -74,15 +74,15 @@ select
   e.event_index_in_session,
 
       --Error details
-  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1[0].message::STRING AS message,
-  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1[0].programming_language::STRING AS programming_language,
-  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1[0].class_name::STRING AS class_name,
-  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1[0].exception_name::STRING AS exception_name,
-  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1[0].is_fatal::BOOLEAN AS is_fatal,
-  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1[0].line_number::INT AS line_number,
-  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1[0].stack_trace::STRING AS stack_trace,
-  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1[0].thread_id::INT AS thread_id,
-  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1[0].thread_name::STRING AS thread_name
+  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1.message::STRING AS message,
+  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1.programming_language::STRING AS programming_language,
+  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1.class_name::STRING AS class_name,
+  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1.exception_name::STRING AS exception_name,
+  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1.is_fatal::BOOLEAN AS is_fatal,
+  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1.line_number::INT AS line_number,
+  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1.stack_trace::STRING AS stack_trace,
+  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1.thread_id::INT AS thread_id,
+  e.unstruct_event_com_snowplowanalytics_snowplow_application_error_1.thread_name::STRING AS thread_name
 
 from {{ ref('snowplow_mobile_base_events_this_run') }} as e
 where e.event_name = 'application_error'
