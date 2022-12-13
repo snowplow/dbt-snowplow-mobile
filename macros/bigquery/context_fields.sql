@@ -1,5 +1,5 @@
 {% macro screen_context_fields() %}
-  
+
   {% set screen_context_fields = [
       {'field':('id', 'screen_id'), 'dtype':'string'},
       {'field':('name', 'screen_name'), 'dtype':'string'},
@@ -15,7 +15,7 @@
 {% endmacro %}
 
 {% macro mobile_context_fields() %}
-  
+
   {% set mobile_context_fields = [
     {'field':'device_manufacturer', 'dtype':'string'},
     {'field':'device_model', 'dtype':'string'},
@@ -35,7 +35,7 @@
 {% endmacro %}
 
 {% macro app_error_context_fields() %}
-  
+
   {% set app_error_context_fields = [
     {'field':'message', 'dtype':'string'},
     {'field':'programming_language', 'dtype':'string'},
@@ -55,7 +55,7 @@
 {% endmacro %}
 
 {% macro geo_context_fields() %}
-  
+
   {% set geo_context_fields = [
     {'field':('latitude', 'device_latitude'), 'dtype':'float64'},
     {'field':('longitude', 'device_longitude'), 'dtype':'float64'},
@@ -71,7 +71,7 @@
 {% endmacro %}
 
 {% macro app_context_fields() %}
-  
+
   {% set app_context_fields = [
     {'field':'build', 'dtype':'string'},
     {'field':'version', 'dtype':'string'}
@@ -82,7 +82,7 @@
 {% endmacro %}
 
 {% macro session_context_fields() %}
-  
+
   {% set session_context_fields = [
     {'field':'session_id', 'dtype':'string'},
     {'field':'session_index', 'dtype':'integer'},
