@@ -97,7 +97,7 @@ with events as (
     a.contexts_com_snowplowanalytics_snowplow_client_session_1[0]:previousSessionId::varchar(36) AS previous_session_id,
     a.contexts_com_snowplowanalytics_snowplow_client_session_1[0]:userId::varchar(36) AS device_user_id,
     a.contexts_com_snowplowanalytics_snowplow_client_session_1[0]:firstEventId::varchar(36) AS session_first_event_id,
-    -- select all from events except non-mobile fields.
+    -- select all fields in case of future additions to context schemas
     a.*
 
   from {{ var('snowplow__events') }} as a
