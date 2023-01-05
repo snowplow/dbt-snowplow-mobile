@@ -3,3 +3,6 @@ target/
 dbt_modules/
 dbt_packages/
 logs/
+dbt-service-account.json
+.DS_Store
+.vscode/settings.json
