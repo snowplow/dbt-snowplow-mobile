@@ -132,7 +132,8 @@ with prep as (
     event_fingerprint,
     true_tstamp,
     parse_json(unstruct_event_com_snowplowanalytics_mobile_screen_view_1_0_0) as unstruct_event_com_snowplowanalytics_mobile_screen_view_1,
-    parse_json(contexts_com_snowplowanalytics_snowplow_client_session_1_0_1) as contexts_com_snowplowanalytics_snowplow_client_session_1
+    parse_json(contexts_com_snowplowanalytics_snowplow_client_session_1_0_1) as contexts_com_snowplowanalytics_snowplow_client_session_1,
+    parse_json(contexts_com_snowplowanalytics_snowplow_geolocation_context_1_1_0) as contexts_com_snowplowanalytics_snowplow_geolocation_context_1
 
 from {{ ref('snowplow_mobile_events') }}
 )
@@ -282,7 +283,15 @@ from {{ ref('snowplow_mobile_events') }}
     contexts_com_snowplowanalytics_snowplow_client_session_1[0]:user_id::varchar AS userId,
     contexts_com_snowplowanalytics_snowplow_client_session_1[0]:event_index::varchar AS eventIndex,
     contexts_com_snowplowanalytics_snowplow_client_session_1[0]:storage_mechanism::varchar AS storageMechanism,
-    contexts_com_snowplowanalytics_snowplow_client_session_1[0]:first_event_timestamp::varchar AS firstEventTimestamp
+    contexts_com_snowplowanalytics_snowplow_client_session_1[0]:first_event_timestamp::varchar AS firstEventTimestamp,
+    contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0]:latitude::float AS latitude,
+    contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0]:longitude::float AS longitude,
+    contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0]:latitude_longitude_accuracy::float AS latitudeLongitudeAccuracy,
+    contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0]:altitude::float AS altitude,
+    contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0]:altitude_accuracy::float AS altitudeAccuracy,
+    contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0]:bearing::float AS bearing,
+    contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0]:speed::float AS speed,
+    contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0]:timestamp::int AS timestamp
 
 from prep
 )
@@ -417,7 +426,8 @@ select
     event_fingerprint,
     true_tstamp,
     object_construct('id',id,'name',name,'previousId',previousId,'previousName',previousName,'previousType',previousType,'transitionType',transitionType,'type',type) as unstruct_event_com_snowplowanalytics_mobile_screen_view_1,
-    parse_json('[{"firstEventId":"'||firstEventId||'", "previousSessionId":"'||previousSessionId||'", "sessionId":"'||sessionId||'", "sessionIndex":"'||sessionIndex||'", "userId":"'||userId||'", "eventIndex":"'||eventIndex||'", "storageMechanism":"'||storageMechanism||'", "firstEventTimestamp":"'||firstEventTimestamp||'"}]' ) as contexts_com_snowplowanalytics_snowplow_client_session_1
+    parse_json('[{"firstEventId":"'||firstEventId||'", "previousSessionId":"'||previousSessionId||'", "sessionId":"'||sessionId||'", "sessionIndex":"'||sessionIndex||'", "userId":"'||userId||'", "eventIndex":"'||eventIndex||'", "storageMechanism":"'||storageMechanism||'", "firstEventTimestamp":"'||firstEventTimestamp||'"}]' ) as contexts_com_snowplowanalytics_snowplow_client_session_1,
+    to_variant([OBJECT_CONSTRUCT_KEEP_NULL('latitude', latitude, 'longitude', longitude, 'latitudeLongitudeAccuracy', latitudeLongitudeAccuracy, 'altitude', altitude, 'altitudeAccuracy', altitudeAccuracy, 'bearing', bearing,'speed', speed,'timestamp', timestamp)]) as contexts_com_snowplowanalytics_snowplow_geolocation_context_1
 
 from flatten
 

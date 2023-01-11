@@ -46,8 +46,9 @@ vars:
     snowplow__start_date: "2021-03-07"
     snowplow__backfill_limit_days: 20
     snowplow__session_context: "{{ ref('snowplow_mobile_session_context_stg') }}"
+    snowplow__geolocation_context: "{{ ref('snowplow_mobile_geolocation_context_stg') }}"
     snowplow__enable_mobile_context: false
-    snowplow__enable_geolocation_context: false
+    snowplow__enable_geolocation_context: true
     snowplow__enable_application_context: false
     snowplow__enable_screen_context: false
     snowplow__enable_app_errors_module: false
@@ -189,6 +190,7 @@ seeds:
           true_tstamp: timestamp
           contexts_com_snowplowanalytics_snowplow_client_session_1_0_1: "{{ 'string' if target.type in ['bigquery', 'databricks', 'spark'] else 'varchar' }}"
           unstruct_event_com_snowplowanalytics_mobile_screen_view_1_0_0: "{{ 'string' if target.type in ['bigquery', 'databricks', 'spark'] else 'varchar' }}"
+          contexts_com_snowplowanalytics_snowplow_geolocation_context_1_1_0: "{{ 'string' if target.type in ['bigquery', 'databricks', 'spark'] else 'varchar' }}"
     expected:
       bigquery:
         +enabled: "{{ target.type == 'bigquery' | as_bool() }}"

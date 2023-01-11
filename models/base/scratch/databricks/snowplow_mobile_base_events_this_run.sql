@@ -69,10 +69,10 @@
     {% if var('snowplow__enable_geolocation_context', false) %}
       a.contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0].latitude::FLOAT AS device_latitude,
       a.contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0].longitude::FLOAT AS device_longitude,
-      a.contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0].latitude_longitude_accuracy::FLOAT AS AS device_latitude_longitude_accuracy,
+      a.contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0].latitude_longitude_accuracy::FLOAT AS device_latitude_longitude_accuracy,
       a.contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0].altitude::FLOAT AS device_altitude,
-      a.contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0].latitude_accuracy::FLOAT AS AS device_altitude_accuracy,
-      a.contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0].bearing::FLOAT AS AS device_bearing,
+      a.contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0].altitude_accuracy::FLOAT AS device_altitude_accuracy,
+      a.contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0].bearing::FLOAT AS device_bearing,
       a.contexts_com_snowplowanalytics_snowplow_geolocation_context_1[0].speed::FLOAT AS device_speed,
     {% else %}
       cast(null as {{ type_float() }}) as device_latitude,

@@ -5,8 +5,9 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: ref('snowplow_mobile_screen_views_expected_stg')
-      - dbt_utils.equality:
+      - snowplow_mobile_integration_tests.equality:
           compare_model: ref('snowplow_mobile_screen_views_expected_stg')
+          precision: 4
           # removing model_tstamp
           compare_columns:
             - screen_view_id
@@ -70,8 +71,9 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: ref('snowplow_mobile_sessions_expected_stg')
-      - dbt_utils.equality:
+      - snowplow_mobile_integration_tests.equality:
           compare_model: ref('snowplow_mobile_sessions_expected_stg')
+          precision: 4
           # removing model_tstamp
           compare_columns:
             - app_id
