@@ -1,3 +1,16 @@
+snowplow-mobile 0.6.3 (2023-02-22)
+---------------------------------------
+## Summary
+This release changes the severity on unique tests on `previous_session_id` columns to `warn` to deal with cases where data is ported to a new phone but both devices are then used. It also makes a change that allows for the `user_mapping` table to be disabled when user stitching is not enabled.
+
+## Features
+
+Move ref in enabled check (Close #61)
+Reduce previous_session_id test severity to warn (Close #62)
+
+## Upgrading
+To upgrade simply bump the snowplow-web version in your `packages.yml` file.  
+
 snowplow-mobile 0.6.2 (2023-01-23)
 ---------------------------------------
 ## Summary
