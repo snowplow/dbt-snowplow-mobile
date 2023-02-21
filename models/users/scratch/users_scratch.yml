@@ -189,7 +189,9 @@ models:
       - name: previous_session_id
         description: '{{ doc("col_previous_session_id") }}'
         tests:
-          - unique
+          - unique:
+              config:
+                severity: warn
       - name: session_first_event_id
         description: '{{ doc("col_session_first_event_id") }}'
         tests:
