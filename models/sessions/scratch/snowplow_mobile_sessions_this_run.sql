@@ -29,9 +29,9 @@ select
 
   {% if var('snowplow__session_stitching') %}
     -- updated with mapping as part of post hook on derived sessions table
-    cast(es.device_user_id as {{snowplow_utils.type_string(4096) }}) as stitched_user_id,
+    cast(es.device_user_id as {{snowplow_utils.type_max_string() }}) as stitched_user_id,
   {% else %}
-    cast(null as {{ snowplow_utils.type_string(4096) }}) as stitched_user_id,
+    cast(null as {{ snowplow_utils.type_max_string() }}) as stitched_user_id,
   {% endif %}
 
   sa.session_duration_s,

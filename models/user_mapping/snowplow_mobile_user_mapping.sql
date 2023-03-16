@@ -4,7 +4,7 @@
     unique_key='device_user_id',
     sort='end_tstamp',
     dist='device_user_id',
-    partition_by = snowplow_utils.get_partition_by(bigquery_partition_by={
+    partition_by = snowplow_utils.get_value_by_target_type(bigquery_val={
       "field": "end_tstamp",
       "data_type": "timestamp"
     }),

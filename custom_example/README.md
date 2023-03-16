@@ -42,7 +42,7 @@ An example of such a set up can be seen in [snowplow_mobile_session_goals.sql](m
 
 - We select events from `snowplow_mobile_base_events_this_run` rather than `atomic.events`. This ensures we only have the events required for this run, as well as not having to worry about de-duping events.
 - We include the `is_run_with_new_events()` macro in the where clause. This ensures that no old data is inserted into the table during back-fills. This improves performance and protects against inaccurate data in the table during batched back-fills.
-- The model is materialized using the `snowplow_incremental` materialization. This reduces the table scan on the target table during the upsert procedure. You could equally use the out-the-box `incremental` materialization if you so wanted.
+- The model is materialized using the `incremental` materialization with the `snowplow_optimize=true` config. This reduces the table scan on the target table during the upsert procedure. You could equally use the out-the-box `incremental` materialization if you so wanted.
 - This incremental table can then be joined back to the `snowplow_mobile_sessions` table to produce a bespoke session view catered for your business needs, `snowplow_mobile_sessions_custom`. Notice how this is materialized as a view, saving on storage cost.
 
 ## Method 2 - Replace a standard derived table with your own custom version

@@ -1,10 +1,10 @@
 {{
   config(
-    partition_by = snowplow_utils.get_partition_by(bigquery_partition_by={
+    partition_by = snowplow_utils.get_value_by_target_type(bigquery_val={
        "field": "start_tstamp",
        "data_type": "timestamp"
      }),
-    cluster_by=snowplow_utils.get_cluster_by(bigquery_cols=["device_user_id"]),
+    cluster_by=snowplow_utils.get_value_by_target_type(bigquery_val=["device_user_id"]),
     sort='device_user_id',
     dist='device_user_id',
     sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt'))
