@@ -1,3 +1,31 @@
+snowplow-mobile 0.7.0 (2023-0X-XX)
+---------------------------------------
+## Summary
+This version migrates our models away from the `snowplow_incremental_materialization` and instead move to using the built-in `incremental` with an optimization applied on top. 
+
+## 🚨 Breaking Changes 🚨
+### Changes to materialization
+To take advantage of the optimization we apply to the `incremental` materialization, users will need to add the following to their `dbt_project.yml` : 
+```yaml
+# dbt_project.yml
+...
+dispatch:
+  - macro_namespace: dbt
+    search_order: ['snowplow_utils', 'dbt']
+```
+
+For custom models please refer to the [snowplow utils migration guide](https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/migration-guides/utils/#upgrading-to-0140) and the latest docs on [creating custom incremental models](https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/dbt-custom-models/#incremental-models).
+
+## Features
+- Migrate from `get_cluster_by` and `get_partition_by` to `get_value_by_target_type`
+- Migrate all models to use new materialization
+
+## Docs
+- Update readme
+
+## Upgrading
+Bump the snowplow-normalize version in your `packages.yml` file, and ensuring you have followed the above steps. You can read more in our [upgrade guide](https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/migration-guides/mobile/#upgrading-to-0140)
+
 snowplow-mobile 0.6.3 (2023-02-22)
 ---------------------------------------
 ## Summary

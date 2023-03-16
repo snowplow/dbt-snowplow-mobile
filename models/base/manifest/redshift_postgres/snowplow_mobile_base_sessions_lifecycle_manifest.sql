@@ -1,12 +1,13 @@
 {{
   config(
-    materialized=var("snowplow__incremental_materialization"),
+    materialized="incremental",
     unique_key='session_id',
     upsert_date_key='start_tstamp',
     sort='start_tstamp',
     dist='session_id',
     full_refresh=snowplow_mobile.allow_refresh(),
-    tags=["manifest"]
+    tags=["manifest"],
+    snowplow_optimize=true
   )
 }}
 
