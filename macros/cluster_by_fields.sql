@@ -6,7 +6,7 @@
 
 {% macro default__mobile_cluster_by_fields_sessions_lifecycle() %}
 
-  {{ return(snowplow_utils.get_cluster_by(bigquery_cols=["session_id"], snowflake_cols=["to_date(start_tstamp)"])) }}
+  {{ return(snowplow_utils.get_value_by_target_type(bigquery_val=["session_id"], snowflake_val=["to_date(start_tstamp)"])) }}
 
 {% endmacro %}
 
@@ -19,7 +19,7 @@
 
 {% macro default__cluster_by_fields_app_errors() %}
 
-  {{ return(snowplow_utils.get_cluster_by(bigquery_cols=["session_id"], snowflake_cols=["to_date(derived_tstamp)"])) }}
+  {{ return(snowplow_utils.get_value_by_target_type(bigquery_val=["session_id"], snowflake_val=["to_date(derived_tstamp)"])) }}
 
 {% endmacro %}
 
@@ -31,7 +31,7 @@
 
 {% macro default__mobile_cluster_by_fields_screen_views() %}
 
-  {{ return(snowplow_utils.get_cluster_by(bigquery_cols=["device_user_id", "session_id"], snowflake_cols=["to_date(derived_tstamp)"])) }}
+  {{ return(snowplow_utils.get_value_by_target_type(bigquery_val=["device_user_id", "session_id"], snowflake_val=["to_date(derived_tstamp)"])) }}
 
 {% endmacro %}
 
@@ -44,7 +44,7 @@
 
 {% macro default__mobile_cluster_by_fields_sessions() %}
 
-  {{ return(snowplow_utils.get_cluster_by(bigquery_cols=["device_user_id"], snowflake_cols=["to_date(start_tstamp)"])) }}
+  {{ return(snowplow_utils.get_value_by_target_type(bigquery_val=["device_user_id"], snowflake_val=["to_date(start_tstamp)"])) }}
 
 {% endmacro %}
 
@@ -57,6 +57,6 @@
 
 {% macro default__mobile_cluster_by_fields_users() %}
 
-  {{ return(snowplow_utils.get_cluster_by(bigquery_cols=["device_user_id"], snowflake_cols=["to_date(start_tstamp)"])) }}
+  {{ return(snowplow_utils.get_value_by_target_type(bigquery_val=["device_user_id"], snowflake_val=["to_date(start_tstamp)"])) }}
 
 {% endmacro %}

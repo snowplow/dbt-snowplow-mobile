@@ -1,22 +1,23 @@
 {{
   config(
-    materialized=var("snowplow__incremental_materialization"),
+    materialized="incremental",
     unique_key='device_user_id',
     upsert_date_key='start_tstamp',
     disable_upsert_lookback=true,
     sort='start_tstamp',
     dist='device_user_id',
-   partition_by = snowplow_utils.get_partition_by(bigquery_partition_by={
+   partition_by = snowplow_utils.get_value_by_target_type(bigquery_val={
        "field": "start_tstamp",
        "data_type": "timestamp"
-     }, databricks_partition_by='start_tstamp_date'),
+     }, databricks_val='start_tstamp_date'),
     cluster_by=snowplow_mobile.mobile_cluster_by_fields_users(),
     tags=["derived"],
     sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt')),
     tblproperties={
       'delta.autoOptimize.optimizeWrite' : 'true',
       'delta.autoOptimize.autoCompact' : 'true'
-    }
+    },
+    snowplow_optimize=true
   )
 }}
 

@@ -1,16 +1,17 @@
 {{
   config(
-    materialized='snowplow_incremental',
+    materialized='incremental',
     enabled=var('snowplow__enable_custom_example'),
     unique_key='max_tstamp',
     upsert_date_key='max_tstamp',
     sort='max_tstamp',
     dist='session_id',
-    partition_by = snowplow_utils.get_partition_by(bigquery_partition_by= {
+    partition_by = snowplow_utils.get_value_by_target_type(bigquery_val= {
       "field": "max_tstamp",
       "data_type": "timestamp"
     }),
-    cluster_by=["session_id"]
+    cluster_by=["session_id"],
+    snowplow_optimize=true
   )
 }}
 
@@ -40,5 +41,3 @@ select
     else FALSE end as has_completed_goals
 
 from goals g
-
-
