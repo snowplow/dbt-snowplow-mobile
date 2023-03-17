@@ -11,7 +11,7 @@
                                                                           'end_tstamp') %}
 
 /* Dedupe logic: Per dupe event_id keep earliest row ordered by collector_tstamp.
-   If multiple earliest rows, i.e. matching collector_tstamp, remove entirely. */
+   If multiple earliest rows, take arbitrary one using row_number(). */
 
 with events_this_run AS (
   select
@@ -22,7 +22,7 @@ with events_this_run AS (
     sc.session_first_event_id,
 
     e.*,
-    dense_rank() over (partition by e.event_id order by e.collector_tstamp) as event_id_dedupe_index --dense_rank so rows with equal tstamps assigned same #
+    row_number() over (partition by e.event_id order by e.collector_tstamp) as event_id_dedupe_index
 
   from {{ var('snowplow__events') }} e
   inner join {{ ref('snowplow_mobile_base_session_context') }} sc
@@ -37,22 +37,6 @@ with events_this_run AS (
   and e.collector_tstamp <= {{ upper_limit }}
   and {{ snowplow_utils.app_id_filter(var("snowplow__app_id",[])) }}
   and e.platform in ('{{ var("snowplow__platform")|join("','") }}') -- filters for 'mob' by default
-)
-
-, events_dedupe as (
-  select
-    *,
-    count(*) over(partition by e.event_id) as row_count
-
-  from events_this_run e
-
-  where e.event_id_dedupe_index = 1 -- Keep row(s) with earliest collector_tstamp per dupe event
-)
-
-, cleaned_events as (
-  select *
-  from events_dedupe
-  where row_count = 1 -- Only keep dupes with single row per earliest collector_tstamp
 )
 
 select
@@ -129,7 +113,7 @@ select
   e.*,
   row_number() over(partition by e.session_id order by e.derived_tstamp) as event_index_in_session
 
-from cleaned_events e
+from events_this_run e
 
 {% if var("snowplow__enable_screen_context", false) %}
   left join {{ ref('snowplow_mobile_base_screen_context') }} sc
@@ -154,3 +138,5 @@ from cleaned_events e
   on e.event_id = ac.root_id
   and e.collector_tstamp = ac.root_tstamp
 {% endif %}
+
+where e.event_id_dedupe_index = 1

@@ -1,6 +1,6 @@
-{{ 
+{{
   config(
-    enabled=(var("snowplow__enable_application_context", false) 
+    enabled=(var("snowplow__enable_application_context", false)
       and target.type in ['redshift','postgres'] | as_bool()),
     dist='root_id',
     sort='root_tstamp'
@@ -11,12 +11,23 @@
                                       ref('snowplow_mobile_base_events_this_run_limits'),
                                       'lower_limit',
                                       'upper_limit') %}
-select
-  ac.root_id,
-  ac.root_tstamp,
-  ac.build,
-  ac.version
+with base as (
 
-from {{ var("snowplow__application_context") }} ac
+  select
+    ac.root_id,
+    ac.root_tstamp,
+    ac.build,
+    ac.version,
+    row_number() over (partition by root_id order by root_tstamp) dedupe_index
 
-where ac.root_tstamp between {{ lower_limit }} and {{ upper_limit }}
+  from {{ var("snowplow__application_context") }} ac
+
+  where ac.root_tstamp between {{ lower_limit }} and {{ upper_limit }}
+
+)
+
+select *
+
+from base
+
+where dedupe_index = 1
