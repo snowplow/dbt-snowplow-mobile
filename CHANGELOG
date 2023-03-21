@@ -1,4 +1,4 @@
-snowplow-mobile 0.7.0 (2023-0X-XX)
+snowplow-mobile 0.7.0 (2023-03-28)
 ---------------------------------------
 ## Summary
 This version contains two major changes, the first is to migrates our models away from the `snowplow_incremental_materialization` and instead move to using the built-in `incremental` with an optimization applied on top. The second is to change the de-duplication logic applied to redshift/postgres to bring it in line with the other warehouses (keeping 1 of the duplicate records, instead of discarding them all). We also upgrade some macros and update some of our docs.
