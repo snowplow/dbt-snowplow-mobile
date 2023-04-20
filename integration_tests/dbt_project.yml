@@ -45,7 +45,7 @@ models:
 vars:
   snowplow__enable_custom_example: false
   snowplow_mobile:
-    snowplow__events: "{{ ref('snowplow_mobile_events_stg') }}"
+    snowplow__events_table: "snowplow_mobile_events_stg"
     snowplow__screen_view_events: "{{ ref('snowplow_mobile_screen_view_context_stg') }}"
     snowplow__start_date: "2021-03-07"
     snowplow__backfill_limit_days: 20
