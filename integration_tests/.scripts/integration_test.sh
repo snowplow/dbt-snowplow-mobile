@@ -25,11 +25,11 @@ for db in ${DATABASES[@]}; do
 
   echo "Snowplow mobile integration tests: Seeding data"
 
-  eval "dbt seed --target $db --full-refresh" || exit 1;
+  eval "dbt seed --full-refresh --target $db" || exit 1;
 
   echo "Snowplow mobile integration tests: Execute models - run 1/4"
 
-  eval "dbt run --target $db --full-refresh --vars '{snowplow__allow_refresh: true, snowplow__backfill_limit_days: 60}'" || exit 1;
+  eval "dbt run --full-refresh --vars '{snowplow__allow_refresh: true, snowplow__backfill_limit_days: 60}' --target $db" || exit 1;
 
   for i in {2..4}
   do

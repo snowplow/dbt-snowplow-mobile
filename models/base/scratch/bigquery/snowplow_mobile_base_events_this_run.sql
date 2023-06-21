@@ -13,52 +13,6 @@
 with events as (
   select
 
--- handling relations for integration tests
-  {% if target.schema.startswith('gh_sp_mobile_dbt_') %}
-    -- screen view events
-    {{ snowplow_utils.get_optional_fields(
-          enabled=true,
-          col_prefix='unstruct_event_com_snowplowanalytics_mobile_screen_view_1_',
-          fields=screen_view_event_fields(),
-          relation=ref('snowplow_mobile_events_stg'),
-          relation_alias='a') }},
-    -- session context
-    {{ snowplow_utils.get_optional_fields(
-          enabled=true,
-          col_prefix='contexts_com_snowplowanalytics_snowplow_client_session_1_',
-          fields=session_context_fields(),
-          relation=ref('snowplow_mobile_events_stg'),
-          relation_alias='a') }},
-    -- screen context
-    {{ snowplow_utils.get_optional_fields(
-          enabled=var('snowplow__enable_screen_context', false),
-          col_prefix='contexts_com_snowplowanalytics_mobile_screen_1_',
-          fields=screen_context_fields(),
-          relation=ref('snowplow_mobile_events_stg'),
-          relation_alias='a') }},
-    -- mobile context
-    {{ snowplow_utils.get_optional_fields(
-          enabled=var('snowplow__enable_mobile_context', false),
-          col_prefix='contexts_com_snowplowanalytics_snowplow_mobile_context_1_',
-          fields=mobile_context_fields(),
-          relation=ref('snowplow_mobile_events_stg'),
-          relation_alias='a') }},
-    -- geo context
-    {{ snowplow_utils.get_optional_fields(
-          enabled=var('snowplow__enable_geolocation_context', false),
-          col_prefix='contexts_com_snowplowanalytics_snowplow_geolocation_context_1_',
-          fields=geo_context_fields(),
-          relation=ref('snowplow_mobile_events_stg'),
-          relation_alias='a') }},
-    -- app context
-    {{ snowplow_utils.get_optional_fields(
-          enabled=var('snowplow__enable_application_context', false),
-          col_prefix='contexts_com_snowplowanalytics_mobile_application_1_',
-          fields=app_context_fields(),
-          relation=ref('snowplow_mobile_events_stg'),
-          relation_alias='a') }},
-
-  {% else %}
     -- screen view events
     {{ snowplow_utils.get_optional_fields(
           enabled=true,
@@ -101,8 +55,6 @@ with events as (
           fields=session_context_fields(),
           relation=source('atomic','events'),
           relation_alias='a') }},
-
-    {% endif %}
 
     a.*
 
