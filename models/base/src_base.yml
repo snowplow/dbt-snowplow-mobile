@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: atomic
-    schema: "{{ var('snowplow__atomic_schema', 'atomic') }}"
+    schema: "{{ var('snowplow__atomic_schema', 'atomic') if project_name != 'snowplow_mobile_integration_tests' else target.schema~'_snplw_mobile_int_tests' }}"
     database: "{{ var('snowplow__database', target.database) if target.type not in ['databricks', 'spark'] else var('snowplow__databricks_catalog', 'hive_metastore') if target.type in ['databricks'] else var('snowplow__atomic_schema', 'atomic') }}"
     tables:
       - name: com_snowplowanalytics_snowplow_client_session_1
@@ -153,8 +153,8 @@ sources:
           - name: type
             description: '{{ doc("col_screen_view_type") }}'
       - name: events
+        identifier: "{{ var('snowplow__events_table', 'events') if project_name != 'snowplow_mobile_integration_tests' else 'snowplow_mobile_events_stg' }}"
         description: '{{ doc("table_events") }}'
-        identifier: "{{ var('snowplow__events_table', 'events') }}"
         columns:
           - name: app_id
             description: '{{ doc("col_app_id") }}'
