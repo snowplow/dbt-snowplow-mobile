@@ -48,13 +48,13 @@ with prep as (
 select
     root_id,
     root_tstamp,
-    case when latitude = 'null' then null else latitude::numeric end as latitude,
-    case when longitude = 'null' then null else longitude::numeric end as longitude,
-    case when latitude_longitude_accuracy = 'null' then null else latitude_longitude_accuracy::numeric end as latitude_longitude_accuracy,
-    case when altitude = 'null' then null else altitude::numeric end as altitude,
-    case when altitude_accuracy = 'null' then null else altitude_accuracy::numeric end as altitude_accuracy,
-    case when bearing = 'null' then null else bearing::numeric end as bearing,
-    case when speed = 'null' then null else speed::numeric end as speed,
+    case when latitude = 'null' then null else latitude::float end as latitude,
+    case when longitude = 'null' then null else longitude::float end as longitude,
+    case when latitude_longitude_accuracy = 'null' then null else latitude_longitude_accuracy::float end as latitude_longitude_accuracy,
+    case when altitude = 'null' then null else altitude::float end as altitude,
+    case when altitude_accuracy = 'null' then null else altitude_accuracy::float end as altitude_accuracy,
+    case when bearing = 'null' then null else bearing::float end as bearing,
+    case when speed = 'null' then null else speed::float end as speed,
     case when timestamp = 'null' then null else timestamp::INTEGER end as timestamp
 
 from prep
