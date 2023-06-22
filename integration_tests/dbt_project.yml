@@ -192,9 +192,9 @@ seeds:
           event_version: "{{ 'string' if target.type in ['bigquery', 'databricks', 'spark'] else 'varchar' }}"
           event_fingerprint: "{{ 'string' if target.type in ['bigquery', 'databricks', 'spark'] else 'varchar' }}"
           true_tstamp: timestamp
-          contexts_com_snowplowanalytics_snowplow_client_session_1_0_1: "{{ 'string' if target.type in ['bigquery', 'databricks', 'spark'] else 'varchar' }}"
-          unstruct_event_com_snowplowanalytics_mobile_screen_view_1_0_0: "{{ 'string' if target.type in ['bigquery', 'databricks', 'spark'] else 'varchar' }}"
-          contexts_com_snowplowanalytics_snowplow_geolocation_context_1_1_0: "{{ 'string' if target.type in ['bigquery', 'databricks', 'spark'] else 'varchar' }}"
+          contexts_com_snowplowanalytics_snowplow_client_session_1_0_1: "{{ 'string' if target.type in ['bigquery', 'databricks', 'spark'] else 'varchar(65535)' }}"
+          unstruct_event_com_snowplowanalytics_mobile_screen_view_1_0_0: "{{ 'string' if target.type in ['bigquery', 'databricks', 'spark'] else 'varchar(65535)' }}"
+          contexts_com_snowplowanalytics_snowplow_geolocation_context_1_1_0: "{{ 'string' if target.type in ['bigquery', 'databricks', 'spark'] else 'varchar(65535)' }}"
     expected:
       bigquery:
         +enabled: "{{ target.type == 'bigquery' | as_bool() }}"
