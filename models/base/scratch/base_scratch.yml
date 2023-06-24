@@ -251,7 +251,9 @@ models:
       - name: true_tstamp
         description: '{{ doc("col_true_tstamp") }}'
       - name: event_id_dedupe_index
-        description: ''
+        description: 'An indexing column used for de-duplication of raw events'
+      - name: event_id_dedupe_count
+        description: 'A count of the total duplicates of the event, used in Redshift/Postgres for joining entities in some cases'
       - name: row_count
         description: ''
       - name: event_index_in_session
