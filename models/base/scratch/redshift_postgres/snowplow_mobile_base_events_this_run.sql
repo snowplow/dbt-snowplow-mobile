@@ -22,7 +22,8 @@ with events_this_run AS (
     sc.session_first_event_id,
 
     e.*,
-    row_number() over (partition by e.event_id order by e.collector_tstamp) as event_id_dedupe_index
+    row_number() over (partition by e.event_id order by e.collector_tstamp) as event_id_dedupe_index,
+    count(*) over (partition by e.event_id) as event_id_dedupe_count
 
   from {{ var('snowplow__events') }} e
   inner join {{ ref('snowplow_mobile_base_session_context') }} sc
