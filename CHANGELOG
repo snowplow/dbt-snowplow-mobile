@@ -1,3 +1,17 @@
+snowplow-mobile 0.7.1 (2023-06-28)
+---------------------------------------
+## Summary
+
+This release allows users to join contexts with valid duplicate values with the help of a new field called `event_id_dedupe_count`, just like in the web model. It also reenables integration tests for Redshift and refactors code for increased readability and simplicity.
+
+## Features
+- Add dedupe count to allow joining of multi-valued contexts
+- Integration tests do not run on Redshift (Close #70)
+- Modify source definition to handle integration tests
+
+## Upgrading
+Bump the snowplow-mobile version in your `packages.yml` file, and ensuring you have followed the above steps. You can read more in our [upgrade guide](https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/migration-guides/mobile/#upgrading-to-0140)
+
 snowplow-mobile 0.7.0 (2023-03-28)
 ---------------------------------------
 ## Summary
@@ -5,7 +19,7 @@ This version contains two major changes, the first is to migrates our models awa
 
 ## 🚨 Breaking Changes 🚨
 ### Changes to materialization
-To take advantage of the optimization we apply to the `incremental` materialization, users will need to add the following to their `dbt_project.yml` : 
+To take advantage of the optimization we apply to the `incremental` materialization, users will need to add the following to their `dbt_project.yml` :
 ```yaml
 # dbt_project.yml
 ...
@@ -41,7 +55,7 @@ Move ref in enabled check (Close #61)
 Reduce previous_session_id test severity to warn (Close #62)
 
 ## Upgrading
-To upgrade simply bump the snowplow-web version in your `packages.yml` file.  
+To upgrade simply bump the snowplow-web version in your `packages.yml` file.
 
 snowplow-mobile 0.6.2 (2023-01-23)
 ---------------------------------------
@@ -54,7 +68,7 @@ Add action for generating docs for pages
 Fix databricks geolocation aliasing (Close #57)
 
 ## Upgrading
-To upgrade simply bump the snowplow-web version in your `packages.yml` file.  
+To upgrade simply bump the snowplow-web version in your `packages.yml` file.
 
 snowplow-mobile 0.6.1 (2022-12-13)
 ---------------------------------------
@@ -65,7 +79,7 @@ This release alters the Databricks `snowplow_mobile_base_events_this_run` table 
 Add all columns to `snowplow_mobile_base_events_this_run` for databricks.
 
 ## Upgrading
-To upgrade simply bump the snowplow-web version in your `packages.yml` file.  
+To upgrade simply bump the snowplow-web version in your `packages.yml` file.
 Any custom models built directly off `snowplow_mobile_base_events_this_run` in databricks may need altering if you `select *` from this table.
 
 snowplow-mobile 0.6.0 (2022-12-08)
