@@ -1,3 +1,10 @@
+snowplow-mobile 0.7.2 (2023-09-12)
+---------------------------------------
+## Summary
+Bumps the max supported `snowplow-utils` version to allow usage with our other packages.
+## Upgrading
+Bump the snowplow-mobile version in your `packages.yml` file.
+
 snowplow-mobile 0.7.1 (2023-06-28)
 ---------------------------------------
 ## Summary
