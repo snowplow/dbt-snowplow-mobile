@@ -1,3 +1,14 @@
+snowplow-mobile 0.7.3 (2023-09-26)
+---------------------------------------
+## Summary
+Fixes a bug where we still used a deprecated `snowplow_is_incremental` function
+
+## Fixes
+- Remove reference to `snowplow_is_incremental`
+
+## Upgrading
+Bump the snowplow-mobile version in your `packages.yml` file.
+
 snowplow-mobile 0.7.2 (2023-09-12)
 ---------------------------------------
 ## Summary
