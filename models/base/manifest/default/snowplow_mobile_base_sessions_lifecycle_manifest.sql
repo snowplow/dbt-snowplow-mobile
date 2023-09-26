@@ -49,7 +49,7 @@ with new_events_session_ids as (
   group by 1
   )
 
-{% if snowplow_utils.snowplow_is_incremental() %}
+{% if is_incremental() %}
 
 , previous_sessions as (
   select *
