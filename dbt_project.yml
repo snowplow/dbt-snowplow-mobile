@@ -62,6 +62,7 @@ vars:
     snowplow__dev_target_name: 'dev'
     snowplow__has_log_enabled: true
     snowplow__allow_refresh: false
+    snowplow__session_timestamp: collector_tstamp # Used to manage utils version higher than 0.15.1, do not change until new base macro is used
 
 
 

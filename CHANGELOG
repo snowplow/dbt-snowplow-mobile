@@ -1,3 +1,15 @@
+snowplow-mobile 0.7.4 (2023-10-03)
+---------------------------------------
+## Summary
+This release fixes an issue for users using a utils version 0.15.1 or greater.
+
+## Fixes
+Fix error with new utils version on end hook.
+
+## Upgrading
+Bump the snowplow-mobile version in your `packages.yml` file.
+
+
 snowplow-mobile 0.7.3 (2023-09-26)
 ---------------------------------------
 ## Summary
