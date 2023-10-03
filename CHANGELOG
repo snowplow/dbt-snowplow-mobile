@@ -1,4 +1,4 @@
-snowplow-mobile 0.7.4 (2023-10-03)
+snowplow-mobile 0.7.4 (2023-10-04)
 ---------------------------------------
 ## Summary
 This release fixes an issue for users using a utils version 0.15.1 or greater.
