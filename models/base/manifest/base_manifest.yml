@@ -4,14 +4,14 @@ models:
   - name: snowplow_mobile_base_sessions_lifecycle_manifest
     description: '{{ doc("table_base_sessions_lifecycle_manifest") }}'
     columns:
-      - name: session_id
+      - name: session_identifier
         description: '{{ doc("col_domain_sessionid") }}'
         tags:
           - primary-key
         tests:
           - unique
           - not_null
-      - name: device_user_id
+      - name: user_identifier
         description: ' {{ doc("col_device_user_id") }}'
         tests:
           - not_null

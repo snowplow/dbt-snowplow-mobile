@@ -24,7 +24,7 @@
 
 select *
   {% if target.type in ['databricks', 'spark'] -%}
-   , DATE(derived_tstamp) as derived_tstamp_date
-   {%- endif %}
+    , DATE(derived_tstamp) as derived_tstamp_date
+  {%- endif %}
 from {{ ref('snowplow_mobile_app_errors_this_run') }}
 where {{ snowplow_utils.is_run_with_new_events('snowplow_mobile') }} --returns false if run doesn't contain new events.

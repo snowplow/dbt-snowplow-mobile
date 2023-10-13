@@ -29,13 +29,13 @@ vars:
     # snowplow__database: Only set if not using target.database for Snowplow events data -- WILL BE IGNORED FOR DATABRICKS
     # snowplow__events_table: "events" # Only set if not using 'events' table for Snowplow events data
     snowplow__events: "{{ source('atomic', 'events') }}"
-    snowplow__session_context: "{{ source('atomic','com_snowplowanalytics_snowplow_client_session_1') }}"
-    snowplow__mobile_context: "{{ source('atomic','com_snowplowanalytics_snowplow_mobile_context_1') }}"
-    snowplow__geolocation_context: "{{ source('atomic','com_snowplowanalytics_snowplow_geolocation_context_1') }}"
-    snowplow__application_context: "{{ source('atomic','com_snowplowanalytics_mobile_application_1') }}"
-    snowplow__screen_context: "{{ source('atomic','com_snowplowanalytics_mobile_screen_1') }}"
-    snowplow__app_errors_table: "{{ source('atomic','com_snowplowanalytics_snowplow_application_error_1') }}"
-    snowplow__screen_view_events: "{{ source('atomic','com_snowplowanalytics_mobile_screen_view_1') }}"
+    snowplow__session_context: com_snowplowanalytics_snowplow_client_session_1
+    snowplow__mobile_context: com_snowplowanalytics_snowplow_mobile_context_1
+    snowplow__geolocation_context: com_snowplowanalytics_snowplow_geolocation_context_1
+    snowplow__application_context: com_snowplowanalytics_mobile_application_1
+    snowplow__screen_context: com_snowplowanalytics_mobile_screen_1
+    snowplow__application_error_events: com_snowplowanalytics_snowplow_application_error_1
+    snowplow__screen_view_events: com_snowplowanalytics_mobile_screen_view_1
     snowplow__sessions_table: "{{ ref('snowplow_mobile_sessions') }}" # Change to your custom sessions table if you have disabled the standard sessions table in favour of a custom version. Advanced config.
     # Variables - Standard Config
     snowplow__start_date: "2020-01-01"
@@ -43,6 +43,15 @@ vars:
     snowplow__app_id: []
     snowplow__platform: ['mob']
     snowplow__session_stitching: true
+    snowplow__user_stitching_id: 'user_id'
+    # please refer to the macros within identifiers.sql for default values
+    snowplow__session_identifiers: []
+    snowplow__user_identifiers: []
+
+
+    # snowplow__session_sql: 'sc.session_id'  # takes priority over session_identifiers
+    # snowplow__user_sql: 'sc.user_id' # takes priority over user identifiers
+
     # Setting default values for 3 enrichments below throughout package rather than here
     # Workaround for a bug (https://github.com/dbt-labs/dbt-core/issues/3698).
     # TODO: Return to having default values here once fixed.
@@ -51,6 +60,10 @@ vars:
     # snowplow__enable_application_context: false
     # snowplow__enable_screen_context: false
     # snowplow__enable_app_errors_module: false
+    snowplow__screen_view_passthroughs: []
+    snowplow__session_passthroughs: []
+    snowplow__user_first_passthroughs: []
+    snowplow__user_last_passthroughs: []
     snowplow__derived_tstamp_partitioned: true
     # Variables - Advanced Config
     snowplow__lookback_window_hours: 6
@@ -72,7 +85,7 @@ on-run-start:
 
 # Update manifest table with last event consumed per sucessfully executed node/model
 on-run-end:
-  - "{{ snowplow_utils.snowplow_incremental_post_hook('snowplow_mobile') }}"
+  - "{{ snowplow_utils.snowplow_incremental_post_hook('snowplow_mobile', 'snowplow_mobile_incremental_manifest', 'snowplow_mobile_base_events_this_run', var('snowplow__session_timestamp', 'load_tstamp')) }}"
 
 
 # Tag 'snowplow_mobile_incremental' allows snowplow_incremental_post_hook to identify Snowplow models
@@ -83,10 +96,6 @@ models:
     base:
       manifest:
         +schema: "snowplow_manifest"
-        redshift_postgres:
-          enabled: "{{ target.type in ['redshift','postgres'] | as_bool() }}"
-        default:
-          enabled: "{{ target.type in ['bigquery', 'databricks', 'snowflake', 'spark'] | as_bool() }}"
       scratch:
         +schema: "scratch"
         +tags: "scratch"
@@ -119,10 +128,6 @@ models:
       scratch:
         +schema: "scratch"
         +tags: "scratch"
-        default:
-          enabled: "{{ target.type in ['bigquery', 'databricks', 'snowflake', 'spark'] | as_bool() }}"
-        redshift_postgres:
-          enabled: "{{ target.type in ['redshift','postgres'] | as_bool() }}"
     sessions:
       +schema: "derived"
       +tags: "snowplow_mobile_incremental"

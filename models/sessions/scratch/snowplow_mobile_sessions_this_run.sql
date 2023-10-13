@@ -12,6 +12,8 @@ select
   es.app_id,
 
   -- session fields
+  es.session_identifier,
+  es.original_session_id,
   es.session_id,
   es.session_index,
   es.previous_session_id,
@@ -24,7 +26,9 @@ select
 
   -- user fields
   es.user_id,
+  es.original_device_user_id,
   es.device_user_id,
+  es.user_identifier,
   es.network_userid,
 
   {% if var('snowplow__session_stitching') %}
@@ -63,7 +67,9 @@ select
   es.apple_idfa,
   es.apple_idfv,
   es.open_idfa,
-
+  es.carrier,
+  es.network_technology,
+  es.network_type,
   es.device_latitude,
   es.device_longitude,
   es.device_latitude_longitude_accuracy,
@@ -86,14 +92,25 @@ select
   es.name_tracker,
   es.v_tracker,
 
-  es.carrier,
-  es.network_technology,
-  es.network_type,
   --first/last build/version to measure app updates.
   es.build as first_build,
   sa.last_build,
   es.version as first_version,
   sa.last_version
+
+  {%- if var('snowplow__session_passthroughs', []) -%}
+    {%- set passthrough_names = [] -%}
+    {%- for identifier in var('snowplow__session_passthroughs', []) %}
+      {# Check if it's a simple column or a sql+alias #}
+      {%- if identifier is mapping -%}
+          ,{{identifier['sql']}} as {{identifier['alias']}}
+          {%- do passthrough_names.append(identifier['alias']) -%}
+      {%- else -%}
+          ,es.{{identifier}}
+          {%- do passthrough_names.append(identifier) -%}
+      {%- endif -%}
+    {% endfor -%}
+  {%- endif %}
 
 from {{ ref('snowplow_mobile_base_events_this_run') }} as es
 
