@@ -31,10 +31,10 @@ select
   array(
     select as struct JSON_EXTRACT_scalar(json_array,'$.session_id') as session_id,
                     JSON_EXTRACT_scalar(json_array,'$.user_id') as user_id,
-                    JSON_EXTRACT_scalar(json_array,'$.session_index') as session_index,
+                    cast(JSON_EXTRACT_scalar(json_array,'$.session_index') as integer) as session_index,
                     JSON_EXTRACT_scalar(json_array,'$.first_event_id') as first_event_id,
                     JSON_EXTRACT_scalar(json_array,'$.previous_session_id') as previous_session_id,
-                    JSON_EXTRACT_scalar(json_array,'$.event_index') as event_index,
+                    cast(JSON_EXTRACT_scalar(json_array,'$.event_index') as integer) as event_index,
                     JSON_EXTRACT_scalar(json_array,'$.storage_mechanism') as storage_mechanism,
                     JSON_EXTRACT_scalar(json_array,'$.first_event_timestamp') as first_event_timestamp
     from unnest(contexts_com_snowplowanalytics_snowplow_client_session_1_0_1) as json_array

@@ -16,7 +16,7 @@
 
 select distinct
   device_user_id,
-  last_value(user_id) over(
+  last_value({{ var('snowplow__user_stitching_id', 'user_id') }}) over(
     partition by device_user_id
     order by collector_tstamp
     rows between unbounded preceding and unbounded following
@@ -26,5 +26,5 @@ select distinct
 from {{ ref('snowplow_mobile_base_events_this_run') }}
 
 where {{ snowplow_utils.is_run_with_new_events('snowplow_mobile') }} --returns false if run doesn't contain new events.
-and user_id is not null
+and {{ var('snowplow__user_stitching_id', 'user_id') }} is not null
 and device_user_id is not null
