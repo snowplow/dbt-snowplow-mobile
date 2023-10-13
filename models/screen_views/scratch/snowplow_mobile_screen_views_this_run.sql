@@ -2,45 +2,28 @@
   config(
     sort='derived_tstamp',
     dist='screen_view_id',
-    tags=["this_run"]
+    cluster_by=snowplow_utils.get_value_by_target_type(bigquery_val=["session_id"]),
+    tags=["this_run"],
+    sql_header=snowplow_utils.set_query_tag(var('snowplow__query_tag', 'snowplow_dbt'))
   )
 }}
 
-with screen_view_ids as (
+with screen_views_dedupe as (
   select
-    sv.root_id,
-    sv.root_tstamp,
-    sv.id as screen_view_id,
-    sv.name as screen_view_name,
-    sv.previous_id as screen_view_previous_id,
-    sv.previous_name as screen_view_previous_name,
-    sv.previous_type as screen_view_previous_type,
-    sv.transition_type as screen_view_transition_type,
-    sv.type as screen_view_type
-
-  from {{ var('snowplow__screen_view_events') }} sv
-)
-
-, screen_view_events as (
-  select *
-
-  from {{ ref('snowplow_mobile_base_events_this_run') }} as ev
-
-  where ev.event_name = 'screen_view'
-)
-
-, screen_views_dedupe as (
-  select
-    sv.screen_view_id,
+    ev.screen_view_id,
     ev.event_id,
 
     ev.app_id,
 
     ev.user_id,
+    ev.original_device_user_id,
+    ev.user_identifier,
     ev.device_user_id,
     ev.network_userid,
 
     ev.session_id,
+    ev.session_identifier,
+    ev.original_session_id,
     ev.session_index,
     ev.previous_session_id,
     ev.session_first_event_id,
@@ -49,15 +32,15 @@ with screen_view_ids as (
     ev.collector_tstamp,
     ev.derived_tstamp,
 
-    sv.screen_view_name,
-    sv.screen_view_transition_type,
-    sv.screen_view_type,
+    ev.screen_view_name,
+    ev.screen_view_transition_type,
+    ev.screen_view_type,
     ev.screen_fragment,
     ev.screen_top_view_controller,
     ev.screen_view_controller,
-    sv.screen_view_previous_id,
-    sv.screen_view_previous_name,
-    sv.screen_view_previous_type,
+    ev.screen_view_previous_id,
+    ev.screen_view_previous_name,
+    ev.screen_view_previous_type,
 
     ev.platform,
     ev.dvce_screenwidth,
@@ -69,6 +52,10 @@ with screen_view_ids as (
     ev.android_idfa,
     ev.apple_idfa,
     ev.apple_idfv,
+    ev.carrier,
+    ev.open_idfa,
+    ev.network_technology,
+    ev.network_type,
 
     ev.device_latitude,
     ev.device_longitude,
@@ -90,23 +77,29 @@ with screen_view_ids as (
 
     ev.useragent,
 
-    ev.carrier,
-    ev.open_idfa,
-    ev.network_technology,
-    ev.network_type,
-
     ev.build,
     ev.version,
 
-    row_number() over (partition by sv.screen_view_id order by ev.derived_tstamp) as screen_view_id_index
+    row_number() over (partition by ev.screen_view_id order by ev.derived_tstamp) as screen_view_id_index
 
-  from screen_view_events as ev
+    {%- if var('snowplow__screen_view_passthroughs', []) -%}
+      {%- set passthrough_names = [] -%}
+      {%- for identifier in var('snowplow__screen_view_passthroughs', []) %}
+      {# Check if it's a simple column or a sql+alias #}
+        {%- if identifier is mapping -%}
+          ,{{identifier['sql']}} as {{identifier['alias']}}
+          {%- do passthrough_names.append(identifier['alias']) -%}
+        {%- else -%}
+          ,ev.{{identifier}}
+          {%- do passthrough_names.append(identifier) -%}
+        {%- endif -%}
+      {% endfor -%}
+  {%- endif %}
 
-  inner join screen_view_ids sv
-  on ev.event_id = sv.root_id
-  and ev.collector_tstamp = sv.root_tstamp
+  from {{ ref('snowplow_mobile_base_events_this_run') }} as ev
 
-  where sv.screen_view_id is not null
+  where ev.event_name = 'screen_view'
+  and ev.screen_view_id is not null
 )
 
 , cleaned_screen_view_events AS (
@@ -117,7 +110,7 @@ with screen_view_ids as (
   from screen_views_dedupe sv
 
   where sv.screen_view_id_index = 1 --take first row of duplicates
-)
+  )
 
 select
   ev.screen_view_id,
@@ -126,10 +119,13 @@ select
   ev.app_id,
 
   ev.user_id,
+  ev.user_identifier,
   ev.device_user_id,
   ev.network_userid,
 
   ev.session_id,
+  ev.original_session_id,
+  ev.session_identifier,
   ev.session_index,
   ev.previous_session_id,
   ev.session_first_event_id,
@@ -163,6 +159,9 @@ select
   ev.apple_idfa,
   ev.apple_idfv,
   ev.open_idfa,
+  ev.carrier,
+  ev.network_technology,
+  ev.network_type,
 
   ev.device_latitude,
   ev.device_longitude,
@@ -183,12 +182,13 @@ select
   ev.user_ipaddress,
 
   ev.useragent,
-
-  ev.carrier,
-  ev.network_technology,
-  ev.network_type,
-
   ev.build,
   ev.version
+
+  {%- if var('snowplow__screen_view_passthroughs', []) -%}
+    {%- for col in passthrough_names %}
+      , ev.{{col}}
+    {%- endfor -%}
+  {%- endif %}
 
 from cleaned_screen_view_events ev

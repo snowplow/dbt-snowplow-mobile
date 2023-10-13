@@ -1,43 +1,24 @@
-{{ 
+{{
   config(
     sort='derived_tstamp',
     dist='event_id',
     tags=["this_run"],
     enabled=(var("snowplow__enable_app_errors_module", false) and target.type in ['redshift', 'postgres'] | as_bool())
-  ) 
+  )
 }}
 {%- set lower_limit, upper_limit = snowplow_utils.return_limits_from_model(
                                       ref('snowplow_mobile_base_events_this_run'),
                                       'collector_tstamp',
                                       'collector_tstamp') %}
 
-with app_errors_events as (
-  select
-      ae.root_id,
-      ae.root_tstamp,
-      ae.message,
-      ae.programming_language,
-      ae.class_name,
-      ae.exception_name,
-      ae.is_fatal,
-      ae.line_number,
-      ae.stack_trace,
-      ae.thread_id,
-      ae.thread_name
-
-  from {{ var('snowplow__app_errors_table') }} ae
-
-  where ae.root_tstamp between {{ lower_limit }} and {{ upper_limit }}
-)
-
-, app_error_base_events as (
+with app_error_base_events as (
   select *
 
   from {{ ref('snowplow_mobile_base_events_this_run') }} as ac
 
   where ac.event_name = 'application_error'
 )
-select 
+select
 
   abe.event_id,
 
@@ -45,9 +26,11 @@ select
 
   abe.user_id,
   abe.device_user_id,
+  abe.user_identifier,
   abe.network_userid,
 
   abe.session_id,
+  abe.session_identifier,
   abe.session_index,
   abe.previous_session_id,
   abe.session_first_event_id,
@@ -104,17 +87,14 @@ select
   abe.version,
   abe.event_index_in_session,
 
-  ae.message,
-  ae.programming_language,
-  ae.class_name,
-  ae.exception_name,
-  ae.is_fatal,
-  ae.line_number,
-  ae.stack_trace,
-  ae.thread_id,
-  ae.thread_name    
+  abe.app_err_con_message,
+  abe.app_err_con_programming_language,
+  abe.app_err_con_class_name,
+  abe.app_err_con_exception_name,
+  abe.app_err_con_is_fatal,
+  abe.app_err_con_line_number,
+  abe.app_err_con_stack_trace,
+  abe.app_err_con_thread_id,
+  abe.app_err_con_thread_name
 
 from app_error_base_events as abe
-inner join app_errors_events ae
-on abe.event_id = ae.root_id
-and abe.collector_tstamp = ae.root_tstamp

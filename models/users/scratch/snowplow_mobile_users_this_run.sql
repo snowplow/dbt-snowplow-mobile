@@ -10,6 +10,8 @@
 select
 
     -- user fields
+    a.user_identifier,
+    a.original_device_user_id,
     a.user_id,
     a.device_user_id,
     a.network_userid,
@@ -50,6 +52,8 @@ select
     a.apple_idfa,
     a.apple_idfv,
     a.open_idfa,
+    a.carrier first_carrier,
+    c.last_carrier,
 
     -- geo fields
     a.geo_country,
@@ -59,10 +63,28 @@ select
     a.geo_latitude,
     a.geo_longitude,
     a.geo_region_name,
-    a.geo_timezone,
+    a.geo_timezone
 
-    a.carrier first_carrier,
-    c.last_carrier
+  {%- if var('snowplow__user_first_passthroughs', []) -%}
+    {%- for identifier in var('snowplow__user_first_passthroughs', []) %}
+      {# Check if it's a simple column or a sql+alias #}
+      {%- if identifier is mapping -%}
+          ,{{identifier['sql']}} as {{identifier['alias']}}
+      {%- else -%}
+          ,a.{{identifier}} as first_{{identifier}}
+      {%- endif -%}
+    {% endfor -%}
+  {%- endif %}
+  {%- if var('snowplow__user_last_passthroughs', []) -%}
+    {%- for identifier in var('snowplow__user_last_passthroughs', []) %}
+      {# Check if it's a simple column or a sql+alias #}
+      {%- if identifier is mapping -%}
+          ,c.{{identifier['alias']}}
+      {%- else -%}
+          ,c.last_{{identifier}}
+      {%- endif -%}
+    {% endfor -%}
+  {%- endif %}
 
 from {{ ref('snowplow_mobile_users_aggs') }} as b
 

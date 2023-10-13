@@ -60,4 +60,7 @@ select
   build,
   version
 
+  , event_id2
+  , v_collector
+
 from {{ ref('snowplow_mobile_screen_views') }}

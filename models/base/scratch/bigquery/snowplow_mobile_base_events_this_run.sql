@@ -4,15 +4,25 @@
   )
 }}
 
-{%- set lower_limit, upper_limit = snowplow_utils.return_limits_from_model(ref('snowplow_mobile_base_sessions_this_run'),
-                                                                          'start_tstamp',
-                                                                          'end_tstamp') %}
+{% set base_events_query = snowplow_utils.base_create_snowplow_events_this_run(
+    sessions_this_run_table='snowplow_mobile_base_sessions_this_run',
+    session_identifiers=session_identifiers(),
+    session_sql=var('snowplow__session_sql', none),
+    session_timestamp=var('snowplow__session_timestamp', 'collector_tstamp'),
+    derived_tstamp_partitioned=var('snowplow__derived_tstamp_partitioned', true),
+    days_late_allowed=var('snowplow__days_late_allowed', 3),
+    max_session_days=var('snowplow__max_session_days', 3),
+    app_ids=var('snowplow__app_id', []),
+    snowplow_events_database=var('snowplow__database', target.database) if target.type not in ['databricks', 'spark'] else var('snowplow__databricks_catalog', 'hive_metastore') if target.type in ['databricks'] else var('snowplow__atomic_schema', 'atomic'),
+    snowplow_events_schema=var('snowplow__atomic_schema', 'atomic'),
+    snowplow_events_table=var('snowplow__events_table', 'events')
+)%}
 
-{% set session_id = snowplow_mobile.get_session_id_path_sql(relation_alias='a') %}
+with base_query as (
+  {{ base_events_query }}
+), prep as (
 
-with events as (
   select
-
     -- screen view events
     {{ snowplow_utils.get_optional_fields(
           enabled=true,
@@ -55,37 +65,16 @@ with events as (
           fields=session_context_fields(),
           relation=source('atomic','events'),
           relation_alias='a') }},
-
     a.*
 
-  from {{ var('snowplow__events') }} as a
-  inner join {{ ref('snowplow_mobile_base_sessions_this_run') }} as b
-  on {{ session_id }} = b.session_id
-
-  where a.collector_tstamp <= {{ snowplow_utils.timestamp_add('day', var("snowplow__max_session_days", 3), 'b.start_tstamp') }}
-  and a.dvce_sent_tstamp <= {{ snowplow_utils.timestamp_add('day', var("snowplow__days_late_allowed", 3), 'a.dvce_created_tstamp') }}
-  and a.collector_tstamp >= {{ lower_limit }}
-  and a.collector_tstamp <= {{ upper_limit }}
-  {% if var('snowplow__derived_tstamp_partitioned', true) and target.type == 'bigquery' | as_bool() %} -- BQ only
-    and a.derived_tstamp >= {{ snowplow_utils.timestamp_add('hour', -1, lower_limit) }}
-    and a.derived_tstamp <= {{ upper_limit }}
-  {% endif %}
-  and {{ snowplow_utils.app_id_filter(var("snowplow__app_id",[])) }}
-  and a.platform in ('{{ var("snowplow__platform")|join("','") }}') -- filters for 'mob' by default
+  from base_query a
 )
-
-, deduped_events as (
-  -- without downstream joins, it's safe to dedupe by picking the first event_id found.
-  select
-    array_agg(e order by e.collector_tstamp limit 1)[offset(0)].*
-
-  from events as e
-
-  group by e.event_id
-)
-
 select
-  d.*,
-  row_number() over(partition by d.session_id order by d.derived_tstamp) as event_index_in_session
+  * except(unstruct_event_com_snowplowanalytics_mobile_screen_view_1_0_0, session_id, device_user_id),
+  session_identifier as session_id,
+  session_id as original_session_id,
+  user_identifier as device_user_id,
+  device_user_id as original_device_user_id,
+  row_number() over(partition by session_id order by derived_tstamp) as event_index_in_session
 
-from deduped_events as d
+from prep

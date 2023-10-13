@@ -67,6 +67,7 @@ models:
             - network_type
             - build
             - version
+            - event_id2
   - name: snowplow_mobile_sessions_actual
     tests:
       - dbt_utils.equal_rowcount:
@@ -139,6 +140,7 @@ models:
             - last_build
             - first_version
             - last_version
+            - event_id2
   - name: snowplow_mobile_users_actual
     tests:
       - dbt_utils.equal_rowcount:
@@ -187,3 +189,5 @@ models:
             - geo_timezone
             - first_carrier
             - last_carrier
+            - first_event_id2
+            - last_event_id2

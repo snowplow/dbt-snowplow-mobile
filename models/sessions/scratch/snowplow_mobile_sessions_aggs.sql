@@ -33,7 +33,7 @@ with events as (
     MAX(case when e.event_index_in_session = e.events_in_session then e.version end) as last_version,
     MAX(case when e.event_index_in_session = e.events_in_session then e.event_name end) as last_event_name,
     {% if target.type == 'postgres' %}
-      cast(MAX(case when e.event_index_in_session = e.events_in_session then cast(e.event_id as {{ type_string() }}) end) as uuid) as session_last_event_id,
+      cast(MAX(case when e.event_index_in_session = e.events_in_session then cast(e.event_id as {{ type_string() }}) end) as {{ type_string() }}) as session_last_event_id,
     {% else %}
       MAX(case when e.event_index_in_session = e.events_in_session then e.event_id end) as session_last_event_id,
     {% endif %}
@@ -60,11 +60,7 @@ with events as (
     group by 1
   {% else %}
     select
-      {% if target.type == 'postgres' %}
-        cast(null as uuid) as session_id,
-      {% else %}
-        cast(null as {{type_string() }}) as session_id,
-      {% endif %}
+      cast(null as {{type_string() }}) as session_id,
       cast(null as {{ type_int() }}) as app_errors,
       cast(null as {{ type_int() }}) as fatal_app_errors
   {% endif %}

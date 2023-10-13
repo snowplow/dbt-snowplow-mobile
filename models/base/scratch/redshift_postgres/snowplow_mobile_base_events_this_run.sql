@@ -6,50 +6,71 @@
   )
 }}
 
-{%- set lower_limit, upper_limit = snowplow_utils.return_limits_from_model(ref('snowplow_mobile_base_sessions_this_run'),
-                                                                          'start_tstamp',
-                                                                          'end_tstamp') %}
+{# dbt passed variables by reference so need to use copy to avoid altering the list multiple times #}
+{% set contexts = var('snowplow__entities_or_sdes', []).copy() %}
 
-/* Dedupe logic: Per dupe event_id keep earliest row ordered by collector_tstamp.
-   If multiple earliest rows, take arbitrary one using row_number(). */
+{% do contexts.append({'schema': var('snowplow__session_context'), 'prefix': 'session_con', 'single_entity': True}) %}
 
-with events_this_run AS (
+{% do contexts.append({'schema': var('snowplow__screen_view_context'), 'prefix': 'screen_view', 'single_entity': True}) %}
+
+{% if var('snowplow__enable_mobile_context', false) -%}
+  {% do contexts.append({'schema': var('snowplow__mobile_context'), 'prefix': 'mobile_con', 'single_entity': True}) %}
+{% endif -%}
+
+{% if var('snowplow__enable_geolocation_context', false) -%}
+  {% do contexts.append({'schema': var('snowplow__geolocation_context'), 'prefix': 'geo_con', 'single_entity': True}) %}
+{% endif -%}
+
+{% if var('snowplow__enable_application_context', false) -%}
+  {% do contexts.append({'schema': var('snowplow__application_context'), 'prefix': 'app_con', 'single_entity': True}) %}
+{% endif -%}
+
+{% if var('snowplow__enable_screen_context', false) -%}
+  {% do contexts.append({'schema': var('snowplow__screen_context'), 'prefix': 'screen_con', 'single_entity': True}) %}
+{% endif -%}
+
+{% if var('snowplow__enable_app_errors_module', false) -%}
+  {% do contexts.append({'schema': var('snowplow__application_error_events'), 'prefix': 'app_err_con', 'single_entity': True}) %}
+{% endif -%}
+
+{% set base_events_query = snowplow_utils.base_create_snowplow_events_this_run(
+    sessions_this_run_table='snowplow_mobile_base_sessions_this_run',
+    session_identifiers=session_identifiers(),
+    session_sql=var('snowplow__session_sql', none),
+    session_timestamp=var('snowplow__session_timestamp', 'collector_tstamp'),
+    derived_tstamp_partitioned=var('snowplow__derived_tstamp_partitioned', true),
+    days_late_allowed=var('snowplow__days_late_allowed', 3),
+    max_session_days=var('snowplow__max_session_days', 3),
+    app_ids=var('snowplow__app_id', []),
+    snowplow_events_database=var('snowplow__database', target.database) if target.type not in ['databricks', 'spark'] else var('snowplow__databricks_catalog', 'hive_metastore') if target.type in ['databricks'] else var('snowplow__atomic_schema', 'atomic'),
+    snowplow_events_schema=var('snowplow__atomic_schema', 'atomic'),
+    snowplow_events_table=var('snowplow__events_table', 'events'),
+    entities_or_sdes=contexts,
+    custom_sql=var('snowplow__custom_sql', '')) %}
+
+{% set final_query %}
+with base_query as (
+  {{ base_events_query }}
+), final as (
   select
-    sc.session_id,
-    sc.session_index,
-    sc.previous_session_id,
-    sc.device_user_id,
-    sc.session_first_event_id,
-
-    e.*,
-    row_number() over (partition by e.event_id order by e.collector_tstamp) as event_id_dedupe_index,
-    count(*) over (partition by e.event_id) as event_id_dedupe_count
-
-  from {{ var('snowplow__events') }} e
-  inner join {{ ref('snowplow_mobile_base_session_context') }} sc
-  on e.event_id = sc.root_id
-  and e.collector_tstamp = sc.root_tstamp
-  inner join {{ ref('snowplow_mobile_base_sessions_this_run') }} str
-  on sc.session_id = str.session_id
-
-  where e.collector_tstamp <= {{ snowplow_utils.timestamp_add('day', var("snowplow__max_session_days", 3), 'str.start_tstamp') }}
-  and e.dvce_sent_tstamp <= {{ snowplow_utils.timestamp_add('day', var("snowplow__days_late_allowed", 3), 'e.dvce_created_tstamp') }}
-  and e.collector_tstamp >= {{ lower_limit }}
-  and e.collector_tstamp <= {{ upper_limit }}
-  and {{ snowplow_utils.app_id_filter(var("snowplow__app_id",[])) }}
-  and e.platform in ('{{ var("snowplow__platform")|join("','") }}') -- filters for 'mob' by default
-)
-
-select
+  -- session context
+  e.sc_session_id as session_id,
+  e.sc_session_index as session_index,
+  e.sc_previous_session_id as previous_session_id,
+  e.sc_user_id as device_user_id,
+  e.sc_first_event_id as session_first_event_id,
+  e.sc_event_index as session_event_index,
+  e.sc_storage_mechanism as session_storage_mechanism,
+  e.sc_first_event_timestamp as session_first_event_timestamp,
   -- screen context
   {% if var("snowplow__enable_screen_context", false) %}
-    sc.screen_id,
-    sc.screen_name,
-    sc.screen_activity,
-    sc.screen_fragment,
-    sc.screen_top_view_controller,
-    sc.screen_type,
-    sc.screen_view_controller,
+    e.screen_con_screen_id as screen_id, --could rename to screen_view_id and coalesce with screen view events,
+    e.screen_con_screen_name as screen_name,
+    e.screen_con_screen_activity as screen_activity,
+    e.screen_con_screen_fragment as screen_fragment,
+    e.screen_con_screen_top_view_controller as screen_top_view_controller,
+    e.screen_con_screen_type as screen_type,
+    e.screen_con_screen_view_controller as screen_view_controller,
   {% else %}
     cast(null as {{ type_string() }}) as screen_id, --could rename to screen_view_id and coalesce with screen view events.
     cast(null as {{ type_string() }}) as screen_name,
@@ -61,17 +82,17 @@ select
   {% endif %}
   -- mobile context
   {% if var("snowplow__enable_mobile_context", false) %}
-    mc.device_manufacturer,
-    mc.device_model,
-    mc.os_type,
-    mc.os_version,
-    mc.android_idfa,
-    mc.apple_idfa,
-    mc.apple_idfv,
-    mc.carrier,
-    mc.open_idfa,
-    mc.network_technology,
-    mc.network_type,
+    e.mobile_con_device_manufacturer as device_manufacturer,
+    e.mobile_con_device_model as device_model,
+    e.mobile_con_os_type as os_type,
+    e.mobile_con_os_version as os_version,
+    e.mobile_con_android_idfa as android_idfa,
+    e.mobile_con_apple_idfa as apple_idfa,
+    e.mobile_con_apple_idfv as apple_idfv,
+    e.mobile_con_carrier as carrier,
+    e.mobile_con_open_idfa as open_idfa,
+    e.mobile_con_network_technology as network_technology,
+    e.mobile_con_network_type as network_type,
   {% else %}
     cast(null as {{ type_string() }}) as device_manufacturer,
     cast(null as {{ type_string() }}) as device_model,
@@ -87,13 +108,13 @@ select
   {% endif %}
   -- geo context
   {% if var("snowplow__enable_geolocation_context", false) %}
-    gc.device_latitude,
-    gc.device_longitude,
-    gc.device_latitude_longitude_accuracy,
-    gc.device_altitude,
-    gc.device_altitude_accuracy,
-    gc.device_bearing,
-    gc.device_speed,
+    e.geo_con_latitude as device_latitude,
+    e.geo_con_longitude as device_longitude,
+    e.geo_con_latitude_longitude_accuracy as device_latitude_longitude_accuracy,
+    e.geo_con_altitude as device_altitude,
+    e.geo_con_altitude_accuracy as device_altitude_accuracy,
+    e.geo_con_bearing as device_bearing,
+    e.geo_con_speed as device_speed,
   {% else %}
     cast(null as {{ type_float() }}) as device_latitude,
     cast(null as {{ type_float() }}) as device_longitude,
@@ -105,39 +126,43 @@ select
   {% endif %}
   -- app context
   {% if var("snowplow__enable_application_context", false) %}
-    ac.build,
-    ac.version,
+    e.app_con_build as build,
+    e.app_con_version as version,
   {% else %}
     cast(null as {{ type_string() }}) as build,
     cast(null as {{ type_string() }}) as version,
   {% endif %}
-  e.*,
-  row_number() over(partition by e.session_id order by e.derived_tstamp) as event_index_in_session
 
-from events_this_run e
+  e.*
 
-{% if var("snowplow__enable_screen_context", false) %}
-  left join {{ ref('snowplow_mobile_base_screen_context') }} sc
-  on e.event_id = sc.root_id
-  and e.collector_tstamp = sc.root_tstamp
-{% endif %}
+  from base_query e
+)
+select * from final
+{% endset %}
+{% set query_cols = get_column_schema_from_query(final_query) %}
 
-{% if var("snowplow__enable_mobile_context", false) %}
-  left join {{ ref('snowplow_mobile_base_mobile_context') }} mc
-  on e.event_id = mc.root_id
-  and e.collector_tstamp = mc.root_tstamp
-{% endif %}
+with final as (
+  {{ final_query }}
+)
+select
+  {% for col in query_cols | map(attribute='name') | list -%}
+    {% if col == 'session_identifier' -%}
+      f.session_identifier as session_id,
+      f.session_identifier as session_identifier
+    {%- elif col == 'session_id' -%}
+      f.session_id as original_session_id
+    {%- elif col == 'user_identifier' -%}
+      f.user_identifier as device_user_id,
+      f.user_identifier as user_identifier
+    {%- elif col == 'device_user_id' -%}
+      f.device_user_id as original_device_user_id
+    {%- else -%}
+      f.{{col}}
+    {%- endif -%}
+    {%- if not loop.last -%},{%- endif %}
+  {% endfor %}
 
-{% if var("snowplow__enable_geolocation_context", false) %}
-  left join {{ ref('snowplow_mobile_base_geo_context') }} gc
-  on e.event_id = gc.root_id
-  and e.collector_tstamp = gc.root_tstamp
-{% endif %}
+  , row_number() over(partition by f.session_identifier order by derived_tstamp) as event_index_in_session
 
-{% if var("snowplow__enable_application_context", false) %}
-  left join {{ ref('snowplow_mobile_base_app_context') }} ac
-  on e.event_id = ac.root_id
-  and e.collector_tstamp = ac.root_tstamp
-{% endif %}
 
-where e.event_id_dedupe_index = 1
+from final f
