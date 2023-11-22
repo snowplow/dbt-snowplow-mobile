@@ -43,7 +43,7 @@ models:
         description: '{{ doc("col_screen_fragment") }}'
       - name: screen_top_view_controller
         description: '{{ doc("col_screen_top_view_controller") }}'
-      - name: screescreen_top_view_controllern_type
+      - name: screen_type
         description: '{{ doc("col_screen_type") }}'
       - name: screen_view_controller
         description: '{{ doc("col_screen_view_controller") }}'

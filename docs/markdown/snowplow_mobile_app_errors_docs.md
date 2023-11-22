@@ -35,7 +35,7 @@ The line number in the code where the app error occured.
 {% enddocs %}
 
 {% docs col_stack_trace %}
- The full stack trace that was presented when the app error occured.
+The full stack trace that was presented when the app error occured.
 {% enddocs %}
 
 {% docs col_thread_id %}
