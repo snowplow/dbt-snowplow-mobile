@@ -1,3 +1,10 @@
+{#
+Copyright (c) 2021-present Snowplow Analytics Ltd. All rights reserved.
+This program is licensed to you under the Snowplow Community License Version 1.0,
+and you may not use this file except in compliance with the Snowplow Community License Version 1.0.
+You may obtain a copy of the Snowplow Community License Version 1.0 at https://docs.snowplow.io/community-license-1.0
+#}
+
 {% macro stitch_user_identifiers(enabled, relation=this, user_mapping_relation='snowplow_mobile_user_mapping') %}
 
   {% if enabled and target.type not in ['databricks', 'spark'] | as_bool() %}
