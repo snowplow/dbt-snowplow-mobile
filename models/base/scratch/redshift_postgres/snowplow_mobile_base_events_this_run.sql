@@ -42,7 +42,7 @@ You may obtain a copy of the Snowplow Community License Version 1.0 at https://d
 
 {% set base_events_query = snowplow_utils.base_create_snowplow_events_this_run(
     sessions_this_run_table='snowplow_mobile_base_sessions_this_run',
-    session_identifiers=var('snowplow__session_identifiers', [{"schema" : var('snowplow__session_context'), "field" : "session_id"}]),
+    session_identifiers=session_identifiers(),
     session_sql=var('snowplow__session_sql', none),
     session_timestamp=var('snowplow__session_timestamp', 'collector_tstamp'),
     derived_tstamp_partitioned=var('snowplow__derived_tstamp_partitioned', true),

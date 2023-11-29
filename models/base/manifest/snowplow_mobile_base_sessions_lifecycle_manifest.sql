@@ -27,10 +27,10 @@ You may obtain a copy of the Snowplow Community License Version 1.0 at https://d
 }}
 
 {% set sessions_lifecycle_manifest_query = snowplow_utils.base_create_snowplow_sessions_lifecycle_manifest(
-    session_identifiers=var('snowplow__session_identifiers', [{"schema" : var('snowplow__session_context'), "field" : "session_id", 'prefix': 'sc'}]),
+    session_identifiers=session_identifiers(),
     session_sql=var('snowplow__session_sql', none),
     session_timestamp=var('snowplow__session_timestamp', 'collector_tstamp'),
-    user_identifiers=var('snowplow__user_identifiers', [{'schema' : var('snowplow__session_context'), 'field' : 'user_id', 'prefix': 'sc'}]),
+    user_identifiers=user_identifiers(),
     user_sql=var('snowplow__user_sql', none),
     derived_tstamp_partitioned=var('snowplow__derived_tstamp_partitioned', true),
     days_late_allowed=var('snowplow__days_late_allowed', 3),

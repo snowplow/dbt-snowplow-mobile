@@ -44,9 +44,12 @@ vars:
     snowplow__platform: ['mob']
     snowplow__session_stitching: true
     snowplow__user_stitching_id: 'user_id'
-    snowplow__session_identifiers: [{'schema' : 'com_snowplowanalytics_snowplow_client_session_1', 'field' : 'session_id', 'prefix': 'sc'}]
+    # please refer to the macros within identifiers.sql for default values
+    snowplow__session_identifiers: []
+    snowplow__user_identifiers: []
+
+
     # snowplow__session_sql: 'sc.session_id'  # takes priority over session_identifiers
-    snowplow__user_identifiers: [{'schema' : 'com_snowplowanalytics_snowplow_client_session_1', 'field' : 'user_id', 'prefix': 'sc'}]
     # snowplow__user_sql: 'sc.user_id' # takes priority over user identifiers
 
     # Setting default values for 3 enrichments below throughout package rather than here
