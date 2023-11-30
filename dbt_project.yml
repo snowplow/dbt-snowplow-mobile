@@ -1,8 +1,8 @@
 name: 'snowplow_mobile'
-version: '0.7.4'
+version: '1.0.0'
 config-version: 2
 
-require-dbt-version: [">=1.4.0", "<2.0.0"]
+require-dbt-version: [">=1.6.0", "<2.0.0"]
 
 profile: 'default'
 
@@ -24,11 +24,59 @@ clean-targets:
 
 vars:
   snowplow_mobile:
-    # Sources
+    # See https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/dbt-configuration/mobile/ for more information and an interactive tool to help you with the variable setup
+    # Please only add those that you change the values of to your root dbt_project.yml file, do not copy all values as this can lead to unexpected issues
+
+    # WAREHOUSE & TRACKER
+    # See https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/dbt-configuration/mobile/ for more information
     # snowplow__atomic_schema: "atomic_data_sample" # Only set if not using 'atomic' schema for Snowplow events data
     # snowplow__database: Only set if not using target.database for Snowplow events data -- WILL BE IGNORED FOR DATABRICKS
-    # snowplow__events_table: "events" # Only set if not using 'events' table for Snowplow events data
+    snowplow__dev_target_name: 'dev'
     snowplow__events: "{{ source('atomic', 'events') }}"
+    # snowplow__events_table: "events" # Only set if not using 'events' table for Snowplow events data
+    snowplow__sessions_table: "{{ ref('snowplow_mobile_sessions') }}" # Change to your custom sessions table if you have disabled the standard sessions table in favour of a custom version. Advanced config.
+
+    # OPERATION & LOGIC
+    snowplow__allow_refresh: false
+    snowplow__backfill_limit_days: 30
+    snowplow__days_late_allowed: 3
+    snowplow__lookback_window_hours: 6
+    snowplow__max_session_days: 3
+    snowplow__session_lookback_days: 730
+    snowplow__session_identifiers: []
+    # snowplow__session_sql: 'sc.session_id'  # takes priority over session_identifiers
+    snowplow__session_stitching: true
+    snowplow__session_timestamp: collector_tstamp # Used to manage utils version higher than 0.15.1, do not change until new base macro is used
+    snowplow__start_date: "2020-01-01"
+    snowplow__upsert_lookback_days: 30
+    snowplow__user_identifiers: []
+    # snowplow__user_sql: 'sc.user_id' # takes priority over user identifiers
+    snowplow__user_stitching_id: 'user_id'
+
+    # CONTEXTS, FILTERS, & LOGS
+    snowplow__app_id: []
+    snowplow__enable_mobile_context: false
+    snowplow__enable_geolocation_context: false
+    snowplow__enable_application_context: false
+    snowplow__enable_screen_context: false
+    snowplow__enable_app_errors_module: false
+    snowplow__has_log_enabled: true
+    snowplow__platform: ['mob']
+    snowplow__screen_view_passthroughs: []
+    snowplow__session_passthroughs: []
+    snowplow__user_first_passthroughs: []
+    snowplow__user_last_passthroughs: []
+
+    # WAREHOUSE SPECIFIC
+      # Bigquery
+    snowplow__derived_tstamp_partitioned: true
+      # Snowflake
+    snowplow__query_tag: "snowplow_dbt"
+      # Databricks
+    # Depending on the use case it should either be the catalog (for Unity Catalog users from databricks connector 1.1.1 onwards) or the same value as your snowplow__atomic_schema (unless changed it should be 'atomic')
+    # snowplow__databricks_catalog: 'hive_metastore'
+      # Redshift/postgres
+    snowplow__entities_or_sdes: []
     snowplow__session_context: com_snowplowanalytics_snowplow_client_session_1
     snowplow__mobile_context: com_snowplowanalytics_snowplow_mobile_context_1
     snowplow__geolocation_context: com_snowplowanalytics_snowplow_geolocation_context_1
@@ -36,48 +84,6 @@ vars:
     snowplow__screen_context: com_snowplowanalytics_mobile_screen_1
     snowplow__application_error_events: com_snowplowanalytics_snowplow_application_error_1
     snowplow__screen_view_events: com_snowplowanalytics_mobile_screen_view_1
-    snowplow__sessions_table: "{{ ref('snowplow_mobile_sessions') }}" # Change to your custom sessions table if you have disabled the standard sessions table in favour of a custom version. Advanced config.
-    # Variables - Standard Config
-    snowplow__start_date: "2020-01-01"
-    snowplow__backfill_limit_days: 30
-    snowplow__app_id: []
-    snowplow__platform: ['mob']
-    snowplow__session_stitching: true
-    snowplow__user_stitching_id: 'user_id'
-    # please refer to the macros within identifiers.sql for default values
-    snowplow__session_identifiers: []
-    snowplow__user_identifiers: []
-
-
-    # snowplow__session_sql: 'sc.session_id'  # takes priority over session_identifiers
-    # snowplow__user_sql: 'sc.user_id' # takes priority over user identifiers
-
-    # Setting default values for 3 enrichments below throughout package rather than here
-    # Workaround for a bug (https://github.com/dbt-labs/dbt-core/issues/3698).
-    # TODO: Return to having default values here once fixed.
-    # snowplow__enable_mobile_context: false
-    # snowplow__enable_geolocation_context: false
-    # snowplow__enable_application_context: false
-    # snowplow__enable_screen_context: false
-    # snowplow__enable_app_errors_module: false
-    snowplow__screen_view_passthroughs: []
-    snowplow__session_passthroughs: []
-    snowplow__user_first_passthroughs: []
-    snowplow__user_last_passthroughs: []
-    snowplow__derived_tstamp_partitioned: true
-    # Variables - Advanced Config
-    snowplow__lookback_window_hours: 6
-    snowplow__session_lookback_days: 730
-    snowplow__days_late_allowed: 3
-    snowplow__max_session_days: 3
-    snowplow__upsert_lookback_days: 30
-    snowplow__query_tag: "snowplow_dbt"
-    snowplow__dev_target_name: 'dev'
-    snowplow__has_log_enabled: true
-    snowplow__allow_refresh: false
-    snowplow__session_timestamp: collector_tstamp # Used to manage utils version higher than 0.15.1, do not change until new base macro is used
-
-
 
 # Remove models from the manifest during run start.
 on-run-start:

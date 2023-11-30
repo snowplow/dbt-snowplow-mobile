@@ -1,3 +1,29 @@
+snowplow-mobile 1.0.0 (2023-12-05)
+---------------------------------------
+## Summary
+This version marks a major milestone as we move the package into a 1.0.0 release. The release itself includes some small fixes as well as some overhauled functionality. We've also updated the license. This release also marks the package as stable and production ready. This package will only receive critical bug fixes going forward as we invest our effort in new packages and projects. We also now bump the minimum supported dbt version to 1.6.0.
+
+From this release onwards, the package is being released under the [Snowplow Community License, Version 1.0](https://docs.snowplow.io/community-license-1.0/). If you are uncertain how it applies to your use case, check our answers to [frequently asked questions](https://docs.snowplow.io/docs/contributing/community-license-faq/).
+
+## Features
+- Migrate base models to the new `base` macros for flexibility and consistency
+- Add ability to add custom entity/self-describing event columns to the `base_events_this_run` table for Redshift/Postgres
+- Add ability to use a custom session identifier and user identifier
+- Add new fields `original_session_id` and `original_device_user_id` to derived tables (where applicable)
+- Add ability to pass fields through to derived page views, sessions, and user tables
+
+## Fixes
+- Fix typo in docs (Close #79)
+
+## Under the hood
+- Update license
+
+## Breaking changes
+- We now require a dbt version >=1.6.0 to run this package
+
+## Upgrading
+Bump the snowplow-mobile version in your `packages.yml` file.
+
 snowplow-mobile 0.7.4 (2023-10-04)
 ---------------------------------------
 ## Summary
