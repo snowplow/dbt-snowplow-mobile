@@ -1,6 +1,8 @@
-[![early-release]][tracker-classification] [![License][license-image]][license] [![Discourse posts][discourse-image]][discourse]
+[![maintained]][tracker-classification] [![License][license-image]][license] [![Discourse posts][discourse-image]][discourse]
 
 ![snowplow-logo](https://raw.githubusercontent.com/snowplow/dbt-snowplow-utils/main/assets/snowplow_logo.png)
+
+> This package is in maintenance mode. This means it will only receive bug fixes and security patches as required. Future development of the Snowplow dbt models is being done in the [Unified Digital](https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/dbt-models/dbt-unified-data-model/) package which you can get access to via the [Snowplow Data Models Pack](https://snowplow.io/snowplow-data-model-pack/).
 
 # snowplow-mobile
 
@@ -25,6 +27,7 @@ The latest version of the snowplow-mobile package supports BigQuery, Databricks,
 
 - A dataset of mobile events from the Snowplow [iOS tracker][ios-tracker] or [Android tracker][android-tracker] must be available in the database.
 - Have the [session context (iOS)][ios-session-context] or [session context (Android)][android-session-context] and [screen view events (iOS)][ios-screen-views] or [screen view events (Android)][android-screen-views] enabled.
+- dbt core version of 1.6.0 or greater
 
 ### Installation
 
@@ -82,7 +85,7 @@ This distribution is all licensed under the [Snowplow Community License, Version
 [license]: https://docs.snowplow.io/community-license-1.0/
 [license-image]: http://img.shields.io/badge/license-Snowplow--Community--1-blue.svg?style=flat
 [tracker-classification]: https://docs.snowplow.io/docs/collecting-data/collecting-from-own-applications/tracker-maintenance-classification/
-[early-release]: https://img.shields.io/static/v1?style=flat&label=Snowplow&message=Early%20Release&color=014477&labelColor=9ba0aa&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAeFBMVEVMaXGXANeYANeXANZbAJmXANeUANSQAM+XANeMAMpaAJhZAJeZANiXANaXANaOAM2WANVnAKWXANZ9ALtmAKVaAJmXANZaAJlXAJZdAJxaAJlZAJdbAJlbAJmQAM+UANKZANhhAJ+EAL+BAL9oAKZnAKVjAKF1ALNBd8J1AAAAKHRSTlMAa1hWXyteBTQJIEwRgUh2JjJon21wcBgNfmc+JlOBQjwezWF2l5dXzkW3/wAAAHpJREFUeNokhQOCA1EAxTL85hi7dXv/E5YPCYBq5DeN4pcqV1XbtW/xTVMIMAZE0cBHEaZhBmIQwCFofeprPUHqjmD/+7peztd62dWQRkvrQayXkn01f/gWp2CrxfjY7rcZ5V7DEMDQgmEozFpZqLUYDsNwOqbnMLwPAJEwCopZxKttAAAAAElFTkSuQmCC
+[maintained]: https://img.shields.io/static/v1?style=flat&label=Snowplow&message=Maintained&color=a069d7&labelColor=9ba0aa&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAeFBMVEVMaXGXANeYANeXANZbAJmXANeUANSQAM+XANeMAMpaAJhZAJeZANiXANaXANaOAM2WANVnAKWXANZ9ALtmAKVaAJmXANZaAJlXAJZdAJxaAJlZAJdbAJlbAJmQAM+UANKZANhhAJ+EAL+BAL9oAKZnAKVjAKF1ALNBd8J1AAAAKHRSTlMAa1hWXyteBTQJIEwRgUh2JjJon21wcBgNfmc+JlOBQjwezWF2l5dXzkW3/wAAAHpJREFUeNokhQOCA1EAxTL85hi7dXv/E5YPCYBq5DeN4pcqV1XbtW/xTVMIMAZE0cBHEaZhBmIQwCFofeprPUHqjmD/+7peztd62dWQRkvrQayXkn01f/gWp2CrxfjY7rcZ5V7DEMDQgmEozFpZqLUYDsNwOqbnMLwPAJEwCopZxKttAAAAAElFTkSuQmCC
 
 [ios-tracker]: https://docs.snowplow.io/docs/collecting-data/collecting-from-own-applications/objective-c-tracker/
 [android-tracker]: https://docs.snowplow.io/docs/collecting-data/collecting-from-own-applications/android-tracker/
